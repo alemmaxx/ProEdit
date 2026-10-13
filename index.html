@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#00704A">
+<title>ProEdit by ProKuiz</title>
+<style>
+:root{--g:#00704A;--gd:#1E3932;--gdd:#132821;--gl:#D4E9E2;--gold:#CBA258;--cream:#F2F0EB;--line:#e1e8e4;--ink:#1E3932;--mute:#6b7f78;--red:#d62b4b}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--gd);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px}
+body{display:flex;flex-direction:column;overflow:hidden;user-select:none;-webkit-user-select:none}
+textarea,input{user-select:text;-webkit-user-select:text}
+button{font-family:inherit;cursor:pointer}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;display:block}
+i[data-ic]{display:contents}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top));background:var(--g);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15);position:relative;z-index:2}
+.brand{display:flex;align-items:center;gap:9px}
+.mark{width:34px;height:34px;border-radius:11px;background:#fff;color:var(--g);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.mark svg.i{width:19px;height:19px}
+.logo{font-weight:900;font-size:17px;line-height:1;letter-spacing:.2px}
+.logo small{display:block;font-size:9.5px;font-weight:800;color:var(--gold);letter-spacing:.6px;margin-top:3px;text-transform:uppercase}
+.hb{display:flex;gap:6px}
+.hbtn{height:34px;min-width:34px;border-radius:10px;border:none;background:rgba(255,255,255,.16);color:#fff;display:flex;align-items:center;justify-content:center;gap:5px;padding:0 9px;font-size:12.5px;font-weight:800}
+.hbtn:disabled{opacity:.35}
+.hbtn.gold{background:var(--gold);color:var(--gdd);padding:0 8px}
+.hbtn svg.i{width:17px;height:17px}
+.lang{display:flex;background:rgba(0,0,0,.2);border-radius:10px;padding:2px}
+.lang button{border:none;background:none;color:#cfe3db;font-size:11px;font-weight:900;padding:0 7px;height:30px;border-radius:8px}
+.lang button.on{background:#fff;color:var(--g)}
+#clock{width:38px;height:38px;flex:0 0 auto;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));cursor:pointer}
+
+/* STAGE */
+#stage{flex:0 0 auto;height:38vh;min-height:220px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#2a5547,#0f231c 75%);position:relative}
+#cv{display:block;border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.55);touch-action:none;background:#000}
+#empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px;color:#fff;background:radial-gradient(circle at 50% 40%,#2a5547,#0f231c 75%)}
+#empty .ring{width:64px;height:64px;border-radius:20px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:var(--gold)}
+#empty .ring svg.i{width:30px;height:30px}
+#empty .muted{color:#a9c4ba}
+
+/* TRANSPORT */
+#bar{display:flex;align-items:center;padding:5px 12px 2px;background:var(--gd);color:#fff}
+#time{flex:1;font-size:11.5px;color:#a9c4ba;font-variant-numeric:tabular-nums}
+#time b{color:#fff;font-size:12.5px}
+#playBtn{width:40px;height:40px;border-radius:50%;border:none;background:#fff;color:var(--g);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.3)}
+#playBtn svg.i{width:17px;height:17px}
+.bright{flex:1;display:flex;justify-content:flex-end;gap:6px}
+.tbtn{width:32px;height:32px;border-radius:9px;border:none;background:rgba(255,255,255,.1);color:#fff;display:flex;align-items:center;justify-content:center}
+.tbtn svg.i{width:16px;height:16px}
+
+/* TIMELINE */
+#stripWrap{position:relative;background:var(--gd);padding:4px 0 10px}
+#strip{overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+#strip::-webkit-scrollbar{display:none}
+#track{min-height:42px}
+.lane{position:relative;margin-bottom:3px}
+.blk{position:absolute;top:0;height:42px;border-radius:8px;background-size:auto 100%;background-repeat:repeat-x;background-color:#2d5a4c;border:2px solid transparent;overflow:hidden}
+.blk.on{border-color:var(--gold)}
+.blk i{position:absolute;font-style:normal;font-size:10px;background:rgba(0,0,0,.6);border-radius:5px;padding:0 3px;line-height:14px}
+.blk .tri{left:2px;top:2px}.blk .ico{right:2px;bottom:2px}.blk .no{left:2px;bottom:2px;color:#fff}
+.bar{position:absolute;height:13px;border-radius:7px;font-size:9px;line-height:13px;padding:0 6px;white-space:nowrap;overflow:hidden;color:#fff;font-weight:700}
+.bar.t{background:#b8913f}.bar.s{background:#e07a4f}.bar.d{background:#3aa57f}.bar.m{background:#4f86c6}
+.bar.on{box-shadow:0 0 0 2px #fff}
+#playhead{position:absolute;top:0;bottom:6px;left:50%;width:2px;margin-left:-1px;background:#fff;pointer-events:none;box-shadow:0 0 8px rgba(255,255,255,.6)}
+#playhead::before{content:'';position:absolute;top:0;left:-4px;border:5px solid transparent;border-top-color:#fff}
+
+/* PANEL */
+main{flex:1;overflow:auto;padding:12px 12px 18px;background:var(--cream);border-radius:18px 18px 0 0;margin-top:-6px;position:relative}
+.tab{display:none}.tab.on{display:block;animation:fi .18s}
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1}}
+.card{background:#fff;border-radius:16px;padding:12px;margin-bottom:10px;box-shadow:0 1px 3px rgba(30,57,50,.08),0 4px 14px rgba(30,57,50,.05)}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+h3{margin:0;font-size:14px;display:flex;align-items:center;gap:7px;color:var(--gd)}
+h3 svg.i{width:17px;height:17px;color:var(--g)}
+h3 .muted{font-weight:600}
+.sub{font-size:10.5px;font-weight:800;color:var(--mute);text-transform:uppercase;letter-spacing:.7px;margin:4px 0 6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:13px;font-weight:700;white-space:nowrap}
+.btn svg.i{width:16px;height:16px}
+.btn.pri{background:var(--g);border-color:var(--g);color:#fff}
+.btn.soft{background:var(--gl);border-color:var(--gl);color:var(--gd)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--gdd)}
+.btn.rec{background:var(--red);border-color:var(--red);color:#fff}
+.btn.redt{color:var(--red)}
+.btn.full{width:100%}
+.btn:active,.tools button:active,.chip:active,.fitb:active,.egrid button:active,.tpl button:active{transform:scale(.95)}
+.tools{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.tools button{background:var(--cream);border:none;color:var(--gd);border-radius:12px;padding:8px 0 6px;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.tools button svg.i{width:19px;height:19px;color:var(--g)}
+.tools button.red,.tools button.red svg.i{color:var(--red)}
+.tools button.add{background:var(--g);color:#fff}
+.tools button.add svg.i{color:#fff}
+.tools button.on{background:var(--gl)}
+label.f{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--mute);margin:10px 0 3px;font-weight:600}
+label.f b{color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--g);height:22px;margin:0}
+select,input[type=number],textarea{width:100%;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px}
+input[type=color]{width:100%;height:36px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:2px}
+textarea{min-height:54px;resize:vertical;font-family:inherit}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1;min-width:0}
+.muted{color:var(--mute);font-size:12px;line-height:1.45}
+.tip{display:flex;gap:6px;align-items:flex-start;margin:4px 2px}
+.tip svg.i{width:14px;height:14px;color:var(--g);margin-top:1px}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin:2px 0 4px}
+.chip{background:var(--cream);color:var(--ink);border:none;border-radius:99px;padding:6px 11px;font-size:12px;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip.on{background:var(--g);color:#fff}
+.check{display:flex;gap:8px;align-items:center;margin:8px 0;font-size:13px}
+.check input{width:18px;height:18px;accent-color:var(--g);flex:0 0 auto}
+.cur{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.cur .th{width:40px;height:56px;border-radius:9px;background-size:cover;background-position:center;flex:0 0 auto;background-color:#ccc}
+.t1{font-weight:800;font-size:13.5px}
+.badge{display:inline-block;background:var(--gl);color:var(--g);font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:4px;vertical-align:middle}
+.fgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.fitb{background:none;border:2px solid transparent;border-radius:12px;padding:2px;color:var(--ink);font-size:10.5px;font-weight:700}
+.fitb div{height:52px;border-radius:9px;background-size:cover;background-position:center;background-color:#ccc;margin-bottom:3px}
+.fitb.on{border-color:var(--g);color:var(--g)}
+.tpl{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:6px;scrollbar-width:none}
+.tpl::-webkit-scrollbar{display:none}
+.tpl button{flex:0 0 auto;width:76px;height:54px;border-radius:12px;border:none;background:linear-gradient(135deg,#3b6b5c,#1E3932);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#fff;padding:0}
+.tpl b{font-size:14px;padding:1px 6px;border-radius:5px;line-height:1.25}
+.tpl small{font-size:9.5px;color:#d4e9e2;font-weight:600}
+.egrid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-bottom:8px;max-height:132px;overflow-y:auto}
+.egrid button{background:var(--cream);border:none;border-radius:9px;font-size:18px;padding:4px 0;line-height:1.2}
+.rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.rgrid button{background:var(--cream);border:2px solid transparent;color:var(--ink);border-radius:12px;padding:7px 2px;font-size:10.5px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px}
+.rgrid i{display:block;border:2px solid currentColor;border-radius:3px}
+.rgrid button.on{border-color:var(--g);color:var(--g);background:var(--gl)}
+.hero{display:flex;gap:12px;align-items:center}
+.hero .ph{width:44px;height:44px;border-radius:13px;background:var(--g);color:#fff;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+
+/* NAV */
+nav{display:flex;background:#fff;border-top:1px solid var(--line);padding:5px 4px max(5px,env(safe-area-inset-bottom))}
+nav button{flex:1;background:none;border:none;color:#8a9a94;padding:2px 0;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:800}
+nav button .ni{width:44px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:14px}
+nav button .ni svg.i{width:20px;height:20px}
+nav button.on{color:var(--g)}
+nav button.on .ni{background:var(--gl)}
+
+/* OVERLAY */
+.ovl{position:fixed;inset:0;background:rgba(14,32,26,.8);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ovl.on{display:flex}
+.box{background:#fff;border-radius:20px;padding:18px;width:100%;max-width:400px;text-align:center;color:var(--ink)}
+.box h3{justify-content:center;margin-bottom:6px}
+.prog{height:8px;background:var(--cream);border-radius:99px;overflow:hidden;margin:14px 0}
+.prog div{height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--gold));transition:width .3s}
+#cdNum{font-size:110px;font-weight:900;color:#fff;text-shadow:0 0 40px var(--g)}
+#toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);background:var(--gd);color:#fff;padding:9px 15px;border-radius:99px;font-size:12.5px;font-weight:700;z-index:80;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#toast.on{opacity:1}
+#vid{position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
+#resVid{width:100%;max-height:44vh;background:#000;border-radius:12px}
+.bstack{display:flex;flex-direction:column;gap:8px}
+.mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:2px 0 8px}
+.mgrid button{background:var(--cream);border:2px solid transparent;border-radius:12px;padding:6px 0 5px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:700;color:var(--ink);min-width:0}
+.mgrid button .em{font-size:19px;line-height:1.2}
+.mgrid button.on{background:var(--g);color:#fff}
+.mgrid button:active{transform:scale(.94)}
+.ovbox{background:var(--cream);border-radius:14px;padding:10px;margin:8px 0 4px}
+input[type=search]{flex:1;min-width:0;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px;height:36px}
+.ovr{display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:7px 8px;margin-top:6px}
+.ovr .flex{flex:1;min-width:0}
+.pbtn{width:32px;height:32px;border-radius:50%;border:none;background:var(--gl);color:var(--g);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.pbtn svg.i{width:14px;height:14px}
+.lic{display:inline-block;font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:99px;background:#fbefd9;color:#8a6420}
+.lic.free{background:var(--gl);color:var(--g)}
+.btn.sm2{height:30px;padding:0 10px;font-size:12px}
+.credit{background:#fbf6ec;border:1px dashed var(--gold);border-radius:10px;padding:8px;font-size:11.5px;line-height:1.4;margin-top:8px;word-break:break-word}
+.bar.x{background:#8e5cc4}
+.ovbox .chip{background:#fff}
+nav button .ni{width:40px}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tcard{position:relative;border:none;border-radius:16px;height:112px;padding:10px;color:#fff;text-align:left;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;box-shadow:0 2px 8px rgba(30,57,50,.15)}
+.tcard .te{position:absolute;top:8px;right:10px;font-size:30px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.tcard b{font-size:13.5px;line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.tcard small{font-size:10.5px;opacity:.9;margin-top:3px}
+.tcard .tn{position:absolute;top:8px;left:10px;font-size:9.5px;font-weight:800;background:rgba(0,0,0,.25);padding:2px 7px;border-radius:99px}
+.tcard:active{transform:scale(.96)}
+.tsheet{background:#fff;border-radius:22px;padding:18px;width:100%;max-width:400px}
+.tsheet .big{font-size:44px;text-align:center}
+.tsheet h3{justify-content:center;font-size:17px;margin:4px 0}
+.tmeta{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin:8px 0 4px}
+.tmeta span{background:var(--cream);border-radius:99px;padding:4px 9px;font-size:11px;font-weight:700}
+.cnt{display:flex;align-items:center;justify-content:center;gap:14px;margin:10px 0 2px}
+.cnt button{width:42px;height:42px;border-radius:50%;border:none;background:var(--gl);color:var(--g);font-size:22px;font-weight:800}
+.cnt b{font-size:30px;min-width:50px;text-align:center;color:var(--gd)}
+input[type=url]{flex:1;min-width:0;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px;height:36px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="mark"><i data-ic="film"></i></div>
+    <div class="logo">ProEdit<small>by ProKuiz</small></div>
+  </div>
+  <div class="hb">
+    <div class="lang" id="langSw"><button data-l="bm">BM</button><button data-l="en">EN</button></div>
+    <button class="hbtn" id="undoBtn" disabled title="Undo"><i data-ic="undo"></i></button>
+    <button class="hbtn gold" id="hdrExport"><i data-ic="export"></i>Export</button>
+    <svg id="clock" viewBox="0 0 100 100" aria-label="Jam">
+      <circle cx="50" cy="50" r="46" fill="#fff" stroke="#CBA258" stroke-width="6"/>
+      <g id="ticks"></g>
+      <line id="hH" x1="50" y1="50" x2="50" y2="28" stroke="#1E3932" stroke-width="7" stroke-linecap="round"/>
+      <line id="mH" x1="50" y1="50" x2="50" y2="17" stroke="#00704A" stroke-width="5" stroke-linecap="round"/>
+      <line id="sH" x1="50" y1="60" x2="50" y2="13" stroke="#d62b4b" stroke-width="2.4" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="5" fill="#CBA258"/>
+    </svg>
+  </div>
+</header>
+
+<div id="stage">
+  <canvas id="cv" width="1080" height="1920"></canvas>
+  <div id="empty">
+    <div class="ring"><i data-ic="film"></i></div>
+    <button class="btn gold" id="emptyAdd"><i data-ic="plus"></i>Tambah Video / Gambar</button>
+    <button class="btn" id="emptyTpl" style="background:rgba(255,255,255,.12);border:none;color:#fff"><i data-ic="grid"></i>Guna Templat</button>
+    <div class="muted">Boleh pilih banyak fail sekaligus</div>
+  </div>
+</div>
+
+<div id="bar">
+  <div id="time"><b>0:00.0</b> / 0:00.0</div>
+  <button id="playBtn"><i data-ic="play"></i></button>
+  <div class="bright"><button class="tbtn" id="toStart" title="Ke mula"><i data-ic="start"></i></button><button class="tbtn" id="zoomBtn" title="Zoom timeline"><i data-ic="zoom"></i></button></div>
+</div>
+
+<div id="stripWrap"><div id="strip"><div id="track"></div></div><div id="playhead"></div></div>
+
+<main>
+  <!-- KLIP -->
+  <section class="tab" id="t-tpl">
+    <div class="card">
+      <div class="hrow"><h3><i data-ic="grid"></i>Templat</h3><span class="badge">50</span></div>
+      <p class="muted" style="margin:-4px 0 8px">Pilih templat, pilih bilangan video/gambar, dan video siap dengan lagu & gerakan ikut beat. Lagu boleh ditukar di tab Suara.</p>
+      <div class="chips" id="tplCat"></div>
+    </div>
+    <div class="tgrid" id="tplGrid"></div>
+    <input type="file" id="fTpl" accept="video/*,image/*" multiple hidden>
+  </section>
+
+  <section class="tab on" id="t-klip">
+    <input type="file" id="fMedia" accept="video/*,image/*" multiple hidden>
+    <div id="clipEd"></div>
+    <div class="card">
+      <div class="hrow"><h3><i data-ic="frame"></i>Kanvas</h3></div>
+      <div class="rgrid" id="ratioGrid"></div>
+      <label class="f">Paparan</label>
+      <div class="chips" id="fitChips"></div>
+      <div id="bgRowC"><label class="f">Warna latar</label><input type="color" id="bgColor" value="#000000"></div>
+    </div>
+    <p class="muted tip"><i data-ic="info"></i>Leret timeline untuk gerak. Klip yang bergaris emas ialah klip yang sedang diedit.</p>
+  </section>
+
+  <!-- TEKS -->
+  <section class="tab" id="t-teks">
+    <div class="card">
+      <div class="hrow"><h3><i data-ic="text"></i>Teks</h3><button class="btn pri" id="addText"><i data-ic="plus"></i>Tambah teks</button></div>
+      <div class="sub">Templat gaya</div>
+      <div class="tpl" id="tplRow"></div>
+      <div class="chips" id="textChips"></div>
+    </div>
+    <div id="textEd"></div>
+    <p class="muted tip"><i data-ic="info"></i>Seret teks pada video untuk ubah kedudukan. Cubit 2 jari untuk besar/kecil.</p>
+  </section>
+
+  <!-- STIKER -->
+  <section class="tab" id="t-stk">
+    <div class="card">
+      <div class="hrow"><h3><i data-ic="smile"></i>Stiker</h3><button class="btn soft" id="addOvImg"><i data-ic="image"></i>Logo / Gambar</button></div>
+      <input type="file" id="fOv" accept="image/*" hidden>
+      <div class="egrid" id="egrid"></div>
+      <div class="chips" id="stkChips"></div>
+    </div>
+    <div id="stkEd"></div>
+  </section>
+
+  <!-- EFEK -->
+  <section class="tab" id="t-efek"><div id="efekEd"></div></section>
+
+  <!-- SUARA -->
+  <section class="tab" id="t-suara">
+    <div class="card">
+      <div class="hrow"><h3><i data-ic="mic"></i>Dubbing</h3><span class="muted" id="dubVidLen"></span></div>
+      <div class="row">
+        <button class="btn rec" id="recDub"><i data-ic="mic"></i>Rakam</button>
+        <button class="btn soft" id="loadDub"><i data-ic="folder"></i>Load fail</button>
+      </div>
+      <input type="file" id="fDub" accept="audio/*,video/*" hidden>
+      <label class="check"><input type="checkbox" id="muteOrig" checked> Senyapkan suara asal semasa rakam</label>
+      <p class="muted" style="margin:0">Rakaman berhenti sendiri bila video tamat. Guna earphone supaya bunyi video tak masuk mic.</p>
+      <div id="dubInfo"></div>
+    </div>
+    <div class="card">
+      <div class="hrow"><h3><i data-ic="music"></i>Muzik latar</h3><button class="btn soft" id="loadMusic"><i data-ic="folder"></i>Upload</button></div>
+      <input type="file" id="fMusic" accept="audio/*,video/*" hidden>
+      <div class="sub">Muzik ProEdit · percuma & bebas hak cipta</div>
+      <div class="mgrid" id="trkGrid"></div>
+      <button class="btn full" id="ovMusicBtn"><i data-ic="search"></i>Cari muzik online</button>
+      <div class="row" style="margin-top:6px"><button class="btn" id="ytLib"><i data-ic="yt"></i>YouTube Audio Library</button><button class="btn" id="mp3Btn" style="flex:0 0 auto"><i data-ic="link"></i>Link MP3</button></div>
+      <div id="mp3Box"></div>
+      <div id="ovMusic"></div>
+      <div id="musicInfo"></div>
+    </div>
+    <div class="card">
+      <div class="hrow"><h3><i data-ic="bell"></i>Kesan bunyi</h3><button class="btn soft" id="ovSfxBtn"><i data-ic="search"></i>Cari online</button></div>
+      <p class="muted" style="margin:-4px 0 8px">Tekan untuk tambah pada garis putih timeline</p>
+      <div class="mgrid" id="sfxGrid"></div>
+      <div id="ovSfx"></div>
+      <div class="chips" id="sfxChips"></div>
+      <div id="sfxEd"></div>
+    </div>
+    <div class="card">
+      <div class="hrow" style="margin-bottom:4px"><h3><i data-ic="vol"></i>Suara asal video</h3><b id="origVolV">100%</b></div>
+      <input type="range" id="origVol" min="0" max="2" step="0.05" value="1">
+    </div>
+  </section>
+
+  <!-- EXPORT -->
+  <section class="tab" id="t-export">
+    <div class="card">
+      <div class="hero"><div class="ph"><i data-ic="export"></i></div><div style="flex:1;min-width:0"><div class="t1">Sedia untuk export</div><div class="muted" id="expInfo"></div></div></div>
+      <label class="f">Resolusi</label>
+      <div class="chips" id="resChips"></div>
+      <button class="btn pri full" id="expBtn" style="margin-top:12px;height:42px;font-size:14px"><i data-ic="export"></i>Export Video</button>
+    </div>
+    <p class="muted tip"><i data-ic="info"></i>Export ikut masa sebenar (video 30 saat ≈ 30–40 saat). Biarkan skrin terbuka. Fail MP4 boleh terus di-share ke TikTok.</p>
+  </section>
+</main>
+
+<nav>
+  <button data-tab="tpl"><span class="ni"><i data-ic="grid"></i></span>Templat</button>
+  <button data-tab="klip" class="on"><span class="ni"><i data-ic="film"></i></span>Klip</button>
+  <button data-tab="teks"><span class="ni"><i data-ic="text"></i></span>Teks</button>
+  <button data-tab="stk"><span class="ni"><i data-ic="smile"></i></span>Stiker</button>
+  <button data-tab="efek"><span class="ni"><i data-ic="magic"></i></span>Efek</button>
+  <button data-tab="suara"><span class="ni"><i data-ic="mic"></i></span>Suara</button>
+  <button data-tab="export"><span class="ni"><i data-ic="export"></i></span>Export</button>
+</nav>
+
+<video id="vid" playsinline webkit-playsinline preload="auto"></video>
+
+<div id="cdOv" class="ovl"><div id="cdNum">3</div></div>
+<div id="expOv" class="ovl"><div class="box">
+  <h3><i data-ic="export"></i>Sedang export… <span id="expPct">0%</span></h3>
+  <div class="prog"><div id="expBar"></div></div>
+  <p class="muted">Biarkan skrin terbuka sehingga siap.</p>
+  <button class="btn redt" id="expCancel"><i data-ic="x"></i>Batal</button>
+</div></div>
+<div id="resOv" class="ovl"><div class="box">
+  <h3><i data-ic="check"></i>Video siap!</h3>
+  <video id="resVid" controls playsinline></video>
+  <div class="muted" id="resInfo" style="margin:8px 0 12px"></div>
+  <div class="bstack">
+    <button class="btn pri full" id="resShare" style="height:42px"><i data-ic="share"></i>Share ke TikTok</button>
+    <div class="row"><button class="btn soft" id="resSave"><i data-ic="save"></i>Simpan</button><button class="btn" id="resClose"><i data-ic="x"></i>Tutup</button></div>
+  </div>
+</div></div>
+<div id="busyOv" class="ovl" style="z-index:70"><div class="box"><h3 id="busyTxt" style="margin:0">Sila tunggu…</h3></div></div>
+<div id="tplOv" class="ovl"><div class="tsheet" id="tplSheet"></div></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* ================= IKON ================= */
+const ICONS = {
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  scissors: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"/>',
+  copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  left: '<path d="m15 18-6-6 6-6"/>', right: '<path d="m9 18 6-6-6-6"/>',
+  trash: '<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/>',
+  vol: '<path d="M11 5 6 9H2v6h4l5 4V5zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>',
+  mute: '<path d="M11 5 6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>',
+  play: '<path d="M7 4v16l13-8z" fill="currentColor" stroke="none"/>',
+  pause: '<rect x="6" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/><rect x="14" y="4" width="4" height="16" rx="1" fill="currentColor" stroke="none"/>',
+  stop: '<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/>',
+  start: '<path d="M19 20 9 12l10-8v16zM5 19V5"/>',
+  zoom: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/>',
+  undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  export: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',
+  film: '<rect x="2" y="2" width="20" height="20" rx="2.5"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5"/>',
+  text: '<path d="M4 7V4h16v3M9 20h6M12 4v16"/>',
+  smile: '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
+  magic: '<path d="m15 4 1.5 3L20 8.5 16.5 10 15 13l-1.5-3L10 8.5 13.5 7z"/><path d="M3 21l9-9"/>',
+  mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/>',
+  music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
+  folder: '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+  share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+  save: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+  reset: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+  layers: '<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/>',
+  center: '<circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>',
+  inT: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  outT: '<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
+  frame: '<rect x="7" y="2" width="10" height="20" rx="2"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  yt: '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+  move: '<path d="M12 2v20M5 15l7 7 7-7"/>',
+  info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  sparkle: '<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>',
+  palette: '<circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2a10 10 0 0 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4A5.6 5.6 0 0 0 22 9.8C22 5.5 17.5 2 12 2z"/>'
+};
+const ic = n => `<svg class="i" viewBox="0 0 24 24">${ICONS[n] || ''}</svg>`;
+function paintIcons(root) { (root || document).querySelectorAll('i[data-ic]').forEach(el => { el.outerHTML = ic(el.dataset.ic); }); }
+
+/* ================= UTIL ================= */
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const r1 = x => Math.round(x * 10) / 10;
+const p2 = n => String(n).padStart(2, '0');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CAP = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+let toastT;
+function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200); }
+function busy(m) { $('#busyTxt').textContent = m; $('#busyOv').classList.add('on'); }
+function unbusy() { $('#busyOv').classList.remove('on'); }
+
+/* ================= BAHASA BM | EN ================= */
+let LANG = 'bm'; try { LANG = localStorage.getItem('proedit_lang') || 'bm'; } catch (e) {}
+const L = (bm, en) => LANG === 'en' ? en : bm;
+const DICT = {
+ 'Tambah Video / Gambar':'Add Video / Photo','Boleh pilih banyak fail sekaligus':'You can pick many files at once','Kanvas':'Canvas','Paparan':'Display','Warna latar':'Background colour',
+ 'Leret timeline untuk gerak. Klip yang bergaris emas ialah klip yang sedang diedit.':'Swipe the timeline to move. The clip with the gold border is the one being edited.',
+ 'Teks':'Text','Tambah teks':'Add text','Templat gaya':'Style templates','Seret teks pada video untuk ubah kedudukan. Cubit 2 jari untuk besar/kecil.':'Drag text on the video to move it. Pinch with 2 fingers to resize.',
+ 'Stiker':'Stickers','Logo / Gambar':'Logo / Image','Rakam':'Record','Load fail':'Load file','Senyapkan suara asal semasa rakam':'Mute original sound while recording',
+ 'Rakaman berhenti sendiri bila video tamat. Guna earphone supaya bunyi video tak masuk mic.':'Recording stops by itself when the video ends. Use earphones so the video sound does not get into the mic.',
+ 'Muzik latar':'Background music','Pilih lagu':'Choose song','Suara asal video':'Original video sound','Sedia untuk export':'Ready to export','Resolusi':'Resolution',
+ 'Export ikut masa sebenar (video 30 saat ≈ 30–40 saat). Biarkan skrin terbuka. Fail MP4 boleh terus di-share ke TikTok.':'Export runs in real time (a 30-second video ≈ 30–40 seconds). Keep the screen on. The MP4 file can be shared straight to TikTok.',
+ 'Klip':'Clips','Efek':'Effects','Suara':'Audio','Sedang export…':'Exporting…','Biarkan skrin terbuka sehingga siap.':'Keep the screen on until it finishes.','Batal':'Cancel',
+ 'Video siap!':'Video ready!','Share ke TikTok':'Share to TikTok','Simpan':'Save','Tutup':'Close','Sila tunggu…':'Please wait…','Ke mula':'To start',
+ 'Tambah video dulu':'Add a video first','Memuatkan fail…':'Loading files…','Terlalu dekat dengan hujung klip':'Too close to the clip edge','Gerakkan timeline ke tengah klip dulu':'Move the timeline into the clip first',
+ '✂ Klip dipotong':'✂ Clip split','Klip disalin':'Clip duplicated','Sudah klip pertama':'Already the first clip','Sudah klip terakhir':'Already the last clip','Dipadam (tekan ↶ untuk undo)':'Deleted (tap ↶ to undo)',
+ 'Filter digunakan pada semua klip':'Filter applied to all clips','Transisi digunakan pada semua klip':'Transition applied to all clips','Gagal baca gambar':'Could not read the image',
+ 'Masa hilang mesti selepas masa muncul':'Hide time must be after show time','Dibawa ke depan':'Brought to front','Memuatkan audio…':'Loading audio…','Audio dimuatkan ✔':'Audio loaded ✔',
+ 'Memproses rakaman…':'Processing recording…','Dubbing siap ✔ Tekan ▶ untuk dengar':'Dubbing ready ✔ Tap ▶ to listen','Untuk Chipmunk/Garau, pilih "Ikut asal"':'For Chipmunk/Deep, choose "Original"',
+ 'Export dibatalkan':'Export cancelled','Share tidak disokong, fail dimuat turun':'Sharing not supported, file downloaded','Menyediakan fail…':'Preparing file…','Menyimpan…':'Saving…',
+ 'Tambah':'Add','Salin':'Duplicate','Kiri':'Left','Kanan':'Right','Padam':'Delete','GAMBAR':'PHOTO','Gambar ·':'Photo ·','Mula':'Start','Tamat':'End','Kelajuan':'Speed',
+ 'Volume klip':'Clip volume','Senyap':'Mute','Buka':'Unmute','Tempoh gambar':'Photo duration','Zoom perlahan (gaya Ken Burns)':'Slow zoom (Ken Burns style)','1:1 Segi empat':'1:1 Square',
+ 'Latar kabur':'Blurred background','Penuh skrin':'Full screen','Tambah video dulu untuk guna filter & transisi.':'Add a video first to use filters & transitions.',
+ 'Asal':'Original','Terang':'Bright','Kontras':'Contrast','Hangat':'Warm','Sejuk':'Cool','Hitam Putih':'Black & White','Pudar':'Faded','Filem':'Film','Malam':'Night',
+ 'Kecerahan':'Brightness','Ketepuan warna':'Saturation','Set semula':'Reset','Semua klip':'All clips','Transisi masuk':'Transition in','Tiada':'None','Geser':'Slide',
+ 'Klip pertama: jadi kesan pembukaan video.':'First clip: becomes the video opening effect.','Kesan berlaku semasa masuk ke klip ini.':'The effect plays when entering this clip.','Guna pada semua klip':'Apply to all clips',
+ 'Kotak Merah':'Red Box','Hijau':'Green','Berita':'News','Tajuk Besar':'Big Title','Elegan':'Elegant','Tulisan':'Script',
+ 'Edit teks':'Edit text','Warna':'Colour','Gaya':'Style','Garis hitam (TikTok)':'Black outline (TikTok)','Biasa + bayang':'Plain + shadow','Neon bercahaya':'Glowing neon','Latar hitam':'Black background',
+ 'Latar putih':'White background','Latar warna pilihan':'Custom colour background','Biasa':'Regular','Mesin taip':'Typewriter','Tulisan tangan':'Handwriting','Tebal':'Bold','Edit gambar':'Edit image',
+ 'Saiz':'Size','Kelutsinaran':'Opacity','Animasi':'Animation','Naik':'Rise','Taip':'Typing','Lompat':'Bounce','Denyut':'Pulse','Goyang':'Shake','Muncul (saat)':'Show at (sec)','Hilang (0 = habis)':'Hide at (0 = end)',
+ 'Muncul':'Show','Hilang':'Hide','Tengah':'Center','Depan':'Front','"Muncul" / "Hilang" = set masa ikut garis putih pada timeline.':'"Show" / "Hide" = set the time at the white line on the timeline.',
+ '(kosong)':'(empty)','🖼 Gambar':'🖼 Image','Padankan dengan video':'Match to video','Ikut asal':'Original','Muat tepat tempoh video':'Fit video length exactly','Kelajuan suara:':'Voice speed:',
+ '⚠ beza besar, suara mungkin berbunyi pelik':'⚠ big difference, voice may sound odd','✔ muat tepat':'✔ fits exactly','Hujung dubbing akan dipotong bila video tamat.':'The end of the dubbing will be cut when the video ends.',
+ 'Dubbing muat dalam video.':'Dubbing fits in the video.','Efek suara':'Voice effect','Garau 👹':'Deep 👹','Gua':'Cave','Mula saat ke-':'Start at second','Dengar':'Listen','Buang':'Remove','Berhenti':'Stop',
+ 'Pilih lagu MP3/M4A dari phone.':'Pick an MP3/M4A song from your phone.','Volume muzik':'Music volume','Mula lagu dari':'Start song from','Ulang jika lagu lebih pendek':'Loop if the song is shorter',
+ 'Fade masuk & keluar':'Fade in & out',
+ 'Muzik ProEdit · percuma & bebas hak cipta':'ProEdit music · free & copyright-free','Cari muzik online':'Search music online','Kesan bunyi':'Sound effects','Cari online':'Search online',
+ 'Tekan untuk tambah pada garis putih timeline':'Tap to add at the white line on the timeline','Ceria':'Upbeat','Santai':'Chill','Epik':'Epic','Comel':'Cute','Korporat':'Corporate',
+ 'Tropika':'Tropical','Suspens':'Suspense','Tradisional':'Traditional','Tepukan':'Applause','Betul':'Correct','Salah':'Wrong','Klik':'Click','Gong':'Gong','Ketawa':'Laugh',
+ 'Cari: happy, piano, chill…':'Search: happy, piano, chill…','Cari: whoosh, click, laugh…':'Search: whoosh, click, laugh…',
+ 'Sumber: Openverse · audio Creative Commons yang boleh guna komersial':'Source: Openverse · Creative Commons audio cleared for commercial use',
+ 'Mencari…':'Searching…','Tiada hasil. Cuba perkataan lain dalam Bahasa Inggeris.':'No results. Try other English words.','Tiada internet atau carian gagal. Cuba lagi.':'No internet or search failed. Try again.',
+ 'Guna':'Use','Bebas (CC0)':'Free (CC0)','Perlu kredit':'Credit needed','Memuat turun audio…':'Downloading audio…','Gagal muat turun audio ini. Cuba yang lain.':'Could not download this audio. Try another.',
+ 'Menjana muzik…':'Generating music…','Muzik dipilih ✔':'Music selected ✔','Kredit (letak dalam caption TikTok):':'Credit (put in your TikTok caption):','Salin kredit':'Copy credit',
+ 'Kredit disalin ✔':'Credit copied ✔','Kesan bunyi ditambah ✔':'Sound effect added ✔','Alih ke sini':'Move here','Tutup':'Close','Upload':'Upload',
+ 'Muzik dijana dalam app · bebas hak cipta':'Generated in-app · copyright-free',
+ 'Templat':'Templates','Guna Templat':'Use Template','Pilih templat, pilih bilangan video/gambar, dan video siap dengan lagu & gerakan ikut beat. Lagu boleh ditukar di tab Suara.':'Pick a template, choose how many videos/photos, and get a finished video with music & beat-synced motion. Change the song in the Audio tab.',
+ 'Semua':'All','Trending':'Trending','Jualan':'Sales','Makanan':'Food','Perayaan':'Celebrations','Travel':'Travel','Keluarga':'Family','Tenaga':'Energy','Sinematik':'Cinematic','Estetik':'Aesthetic','Lucu':'Fun',
+ 'Bilangan video / gambar':'Number of videos / photos','Anggaran tempoh':'Estimated length','Laju':'Fast','Sederhana':'Medium','Perlahan':'Slow','Menyediakan templat…':'Preparing template…',
+ 'Templat siap! Tekan ▶ untuk tengok. Tukar lagu di tab Suara.':'Template ready! Tap ▶ to watch. Change the song in the Audio tab.','Projek sekarang akan diganti. Teruskan?':'The current project will be replaced. Continue?',
+ 'Gerakan':'Motion','Zoom masuk':'Zoom in','Zoom keluar':'Zoom out','Geser kiri':'Pan left','Geser kanan':'Pan right','Denyut beat':'Beat pulse','Pusing':'Spin','Kilat ikut beat':'Flash on beat',
+ 'Gerakan digunakan pada semua klip':'Motion applied to all clips','YouTube Audio Library':'YouTube Audio Library','Link MP3':'MP3 link','Tampal link fail MP3 / audio…':'Paste an MP3 / audio file link…',
+ 'Link YouTube tidak boleh digunakan. Muat turun dari YouTube Audio Library, kemudian tekan Upload.':'YouTube links cannot be used. Download from YouTube Audio Library, then tap Upload.',
+ 'Pastikan anda ada hak menggunakan audio ini.':'Make sure you have the right to use this audio.','Link tidak sah':'Invalid link',
+ 'Muat turun lagu percuma di YouTube Audio Library, kemudian kembali dan tekan Upload.':'Download free songs from YouTube Audio Library, then come back and tap Upload.','Kesan bunyi':'Sound effects','Belum ada video.':'No video yet.','⚠ Lebih 3 minit, export ambil masa lama.':'⚠ Over 3 minutes, export will take a while.','HD 720p (ringan)':'HD 720p (lighter)','Jam':'Clock'
+};
+const RX = [
+ [/^Klip (\d+) \/ (\d+)$/, 'Clip $1 / $2'], [/^· Klip (\d+)$/, '· Clip $1'], [/^Gaya "(.+)" digunakan$/, 'Style "$1" applied'],
+ [/^Muncul pada (.+)$/, 'Shows at $1'], [/^Hilang pada (.+)$/, 'Hides at $1'], [/^Zoom timeline (.+)x$/, 'Timeline zoom $1x'], [/^Gagal baca (.+)$/, 'Could not read $1'],
+ [/^Edit stiker (.+)$/, 'Edit sticker $1'], [/^(.+) Stiker$/, '$1 Sticker'], [/^Menyediakan fail… (\d+)%$/, 'Preparing file… $1%'], [/^Asal (.+) →$/, 'Original $1 →']
+];
+const PH = [['teks/stiker', 'text/stickers'], ['klip', 'clips'], ['muzik', 'music'], ['Saiz', 'Size'], ['Rakaman suara', 'Voice recording']]
+  .map(([a, b]) => [new RegExp('(^|[^\\p{L}])' + a.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&') + '(?=$|[^\\p{L}])', 'gu'), '$1' + b]);
+function tr(s) {
+  if (LANG !== 'en' || !s) return s;
+  const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/), core = m[2];
+  if (!core) return s;
+  let o = DICT[core];
+  if (o == null) for (const [re, r] of RX) if (re.test(core)) { o = core.replace(re, r); break; }
+  if (o == null) { let x = core; for (const [re, r] of PH) x = x.replace(re, r); if (x !== core) o = x; }
+  return o == null ? s : m[1] + o + m[3];
+}
+const NOTR = new Set(['SCRIPT', 'STYLE', 'TEXTAREA']);
+function trNode(n) {
+  if (n.nodeType === 3) {
+    const p = n.parentNode; if (!p || NOTR.has(p.nodeName)) return;
+    if (n.__bm === undefined || n.nodeValue !== n.__tr) n.__bm = n.nodeValue;
+    const out = tr(n.__bm); n.__tr = out; if (n.nodeValue !== out) n.nodeValue = out;
+  } else if (n.nodeType === 1 && !NOTR.has(n.nodeName)) {
+    for (const a of ['title', 'aria-label', 'placeholder']) if (n.hasAttribute(a)) { if (n['__bm_' + a] === undefined) n['__bm_' + a] = n.getAttribute(a); n.setAttribute(a, tr(n['__bm_' + a])); }
+    n.childNodes.forEach(trNode);
+  }
+}
+new MutationObserver(ms => { if (LANG !== 'en') return; for (const m of ms) m.addedNodes.forEach(trNode); }).observe(document.body, { childList: true, subtree: true });
+function setLang(l) {
+  LANG = l; try { localStorage.setItem('proedit_lang', l); } catch (e) {}
+  document.documentElement.lang = l === 'en' ? 'en' : 'ms';
+  $$('#langSw button').forEach(b => b.classList.toggle('on', b.dataset.l === l));
+  trNode(document.body);
+}
+$('#langSw').onclick = e => { const b = e.target.closest('[data-l]'); if (b && b.dataset.l !== LANG) { setLang(b.dataset.l); toast(L('Bahasa: Melayu', 'Language: English')); } };
+
+/* ================= JAM ANALOG ================= */
+(() => {
+  let t = '';
+  for (let i = 0; i < 12; i++) { const a = i * 30, big = i % 3 === 0; t += `<line x1="50" y1="${big ? 9 : 10}" x2="50" y2="${big ? 17 : 14}" stroke="${big ? '#1E3932' : '#9bb3aa'}" stroke-width="${big ? 4 : 2.5}" stroke-linecap="round" transform="rotate(${a} 50 50)"/>`; }
+  $('#ticks').innerHTML = t;
+  const rot = (id, d) => $(id).setAttribute('transform', `rotate(${d} 50 50)`);
+  function upd() {
+    const d = new Date(), s = d.getSeconds(), m = d.getMinutes() + s / 60, h = (d.getHours() % 12) + m / 60;
+    rot('#hH', h * 30); rot('#mH', m * 6); rot('#sH', s * 6);
+  }
+  upd(); setInterval(upd, 1000);
+  $('#clock').onclick = () => {
+    const d = new Date();
+    toast(d.toLocaleTimeString(LANG === 'en' ? 'en-MY' : 'ms-MY', { hour: '2-digit', minute: '2-digit' }) + ' · ' + d.toLocaleDateString(LANG === 'en' ? 'en-MY' : 'ms-MY', { weekday: 'long', day: 'numeric', month: 'long' }));
+  };
+})();
+function fmt(t) { t = Math.max(0, t || 0); const m = Math.floor(t / 60), s = t - m * 60; return m + ':' + (s < 9.95 ? '0' : '') + s.toFixed(1); }
+function waitEv(el, ev, ms) { return new Promise(r => { let d = false; const f = () => { if (d) return; d = true; el.removeEventListener(ev, f); r(); }; el.addEventListener(ev, f); setTimeout(f, ms || 3000); }); }
+const chipsHtml = (list, val, attr) => list.map(([v, t]) => `<button class="chip ${String(v) === String(val) ? 'on' : ''}" data-${attr}="${v}">${t}</button>`).join('');
+const opt = (list, val) => list.map(([v, t]) => `<option value="${esc(v)}" ${v === val ? 'selected' : ''}>${t}</option>`).join('');
+const tool = (act, icon, label, cls, attr) => `<button data-${attr || 'c'}="${act}" class="${cls || ''}">${ic(icon)}${label}</button>`;
+
+/* ================= DATA ================= */
+const FILTERS = {
+  none: ['Asal', ''], terang: ['Terang', 'brightness(1.15) saturate(1.1)'], vivid: ['Vivid', 'saturate(1.6) contrast(1.1)'],
+  kontras: ['Kontras', 'contrast(1.35) saturate(1.1)'], hangat: ['Hangat', 'sepia(.3) saturate(1.35) brightness(1.04)'],
+  sejuk: ['Sejuk', 'saturate(.9) hue-rotate(12deg) brightness(1.05)'], vintage: ['Vintage', 'sepia(.5) contrast(1.05) brightness(1.05) saturate(.85)'],
+  bw: ['Hitam Putih', 'grayscale(1) contrast(1.15)'], drama: ['Drama', 'contrast(1.45) brightness(.88) saturate(.8)'],
+  pudar: ['Pudar', 'contrast(.85) brightness(1.12) saturate(.7)'], filem: ['Filem', 'contrast(1.15) saturate(1.2) sepia(.15) hue-rotate(-8deg)'],
+  malam: ['Malam', 'brightness(.8) contrast(1.2) hue-rotate(20deg) saturate(1.2)']
+};
+const MOTIONS = [['none','Tiada'],['zin','Zoom masuk'],['zout','Zoom keluar'],['panl','Geser kiri'],['panr','Geser kanan'],['pulse','Denyut beat'],['shake','Goyang'],['spin','Pusing']];
+const TRANS = [['none','Tiada'],['fade','Fade'],['flash','Flash'],['zoom','Zoom'],['slide','Geser']];
+const ANIMS = [['none','Tiada'],['fade','Fade'],['pop','Pop'],['slide','Naik'],['zoom','Zoom'],['typing','Taip'],['bounce','Lompat'],['pulse','Denyut'],['shake','Goyang']];
+const FX = [['none','Asal'],['chipmunk','Chipmunk 🐿'],['garau','Garau 👹'],['echo','Echo'],['gua','Gua'],['radio','Radio 📻'],['robot','Robot 🤖']];
+const FONTS = [['sans-serif','Biasa'],['Impact, Haettenschweiler, sans-serif','Impact'],['serif','Serif'],['Georgia, serif','Georgia'],['monospace','Mesin taip'],['cursive','Tulisan tangan']];
+const STYLES = [['stroke','Garis hitam (TikTok)'],['none','Biasa + bayang'],['neon','Neon bercahaya'],['bgDark','Latar hitam'],['bgLight','Latar putih'],['bgColor','Latar warna pilihan']];
+const RATIOS = [['9:16','TikTok',14,24],['4:5','Instagram',18,22],['1:1','Segi empat',20,20],['16:9','YouTube',26,15]];
+const FITS = [['blur','Latar kabur'],['color','Warna latar'],['cover','Penuh skrin']];
+const EMOJI = ['😂','🤣','😍','🥰','😎','🤩','😭','😱','🤯','😡','🥳','🤔','👍','👏','🙏','💪','🔥','❤️','💯','✨','⭐','🎉','🎁','🎂','🏆','💰','🛒','📢','📍','✅','❌','⚠️','👉','👇','➡️','💥','💡','🍔','🍜','☕','🕌','🇲🇾','😋','🤑','🙌','👀','💬','🎵'];
+const TPL = [
+  { n: 'TikTok', css: 'color:#fff;-webkit-text-stroke:1px #000;font-weight:900', p: { color: '#ffffff', style: 'stroke', font: 'sans-serif', bold: true, size: 72 } },
+  { n: 'Kotak Merah', css: 'background:#fe2c55;color:#fff;font-weight:800', p: { color: '#ffffff', style: 'bgColor', bg: '#fe2c55', font: 'sans-serif', bold: true, size: 64 } },
+  { n: 'Hijau', css: 'background:#00704A;color:#fff;font-weight:800', p: { color: '#ffffff', style: 'bgColor', bg: '#00704A', font: 'sans-serif', bold: true, size: 64 } },
+  { n: 'Berita', css: 'background:#ffd60a;color:#000;font-family:Impact,sans-serif', p: { color: '#000000', style: 'bgColor', bg: '#ffd60a', font: 'Impact, Haettenschweiler, sans-serif', bold: false, size: 70 } },
+  { n: 'Neon', css: 'color:#fff;text-shadow:0 0 6px #25f4ee,0 0 12px #25f4ee;font-weight:800', p: { color: '#25f4ee', style: 'neon', font: 'sans-serif', bold: true, size: 80 } },
+  { n: 'Neon Pink', css: 'color:#fff;text-shadow:0 0 6px #ff2bd6,0 0 12px #ff2bd6;font-weight:800', p: { color: '#ff2bd6', style: 'neon', font: 'sans-serif', bold: true, size: 80 } },
+  { n: 'Subtitle', css: 'background:rgba(0,0,0,.7);color:#fff', p: { color: '#ffffff', style: 'bgDark', font: 'sans-serif', bold: false, size: 50, y: 0.82 } },
+  { n: 'Tajuk Besar', css: 'color:#ffd60a;-webkit-text-stroke:1px #000;font-family:Impact,sans-serif', p: { color: '#ffd60a', style: 'stroke', font: 'Impact, Haettenschweiler, sans-serif', bold: false, size: 130, anim: 'pop' } },
+  { n: 'Elegan', css: 'background:#fff;color:#111;font-family:Georgia,serif', p: { color: '#111111', style: 'bgLight', font: 'Georgia, serif', bold: false, size: 60 } },
+  { n: 'Tulisan', css: 'color:#fff;font-family:cursive;text-shadow:0 2px 4px #000;font-weight:700', p: { color: '#ffffff', style: 'none', font: 'cursive', bold: true, size: 86 } }
+];
+
+/* ================= STATE ================= */
+const S = { beat: 0.5, clips: [], items: [], sfx: [], dub: null, music: null, origVol: 1, fit: 'blur', bg: '#000000', ratio: '9:16', res: 1080, sel: null };
+let W = 1080, H = 1920, uid = 1, pps = 60;
+const cv = $('#cv'), g = cv.getContext('2d');
+const v = $('#vid');
+const small = document.createElement('canvas'), sg = small.getContext('2d');
+let sfxGain, actx = null, master, origGain, dubGain, musicGain, recDest, impulseBuf = null;
+let playing = false, curT = 0, ci = -1, switching = false, dirty = true, imgT0 = 0;
+let srcNodes = [], fxNodes = [], exporting = false, exportCancelled = false, recorder = null, dubRec = null, onFinish = null;
+let lastCurId, pvTimer = null;
+
+/* ================= TIMELINE ================= */
+const clipLen = c => (c.out - c.in) / c.speed;
+const total = () => S.clips.reduce((a, c) => a + clipLen(c), 0);
+function clipStart(i) { let s = 0; for (let k = 0; k < i; k++) s += clipLen(S.clips[k]); return s; }
+function locate(t) {
+  let s = 0;
+  for (let i = 0; i < S.clips.length; i++) {
+    const c = S.clips[i], L = clipLen(c);
+    if (t < s + L || i === S.clips.length - 1) return { i, start: s, local: Math.min(c.out, c.in + Math.max(0, t - s) * c.speed) };
+    s += L;
+  }
+  return null;
+}
+const curClip = () => S.clips.length ? S.clips[locate(curT).i] : null;
+const selItem = () => S.items.find(x => x.id === S.sel);
+function newStart() { let s = r1(curT); if (s >= total() - 0.3) s = 0; return s; }
+const dims = el => [el.naturalWidth || el.videoWidth || el.width || 1, el.naturalHeight || el.videoHeight || el.height || 1];
+function filterStr(c) {
+  const a = c.adj, f = (FILTERS[c.filter] || ['', ''])[1]
+    + (a.b !== 100 ? ` brightness(${a.b}%)` : '') + (a.c !== 100 ? ` contrast(${a.c}%)` : '') + (a.s !== 100 ? ` saturate(${a.s}%)` : '');
+  return f.trim() || 'none';
+}
+
+/* ================= UNDO ================= */
+const undoStack = []; let lastPush = 0;
+function snap() { return { clips: S.clips.map(c => ({ ...c, adj: { ...c.adj } })), items: S.items.map(x => ({ ...x, _box: null })), sel: S.sel, sfx: S.sfx.map(x => ({ ...x })) }; }
+function pushUndo(force) {
+  const now = Date.now(); if (!force && now - lastPush < 900) return; lastPush = now;
+  undoStack.push(snap()); if (undoStack.length > 40) undoStack.shift(); updUndo();
+}
+function updUndo() { $('#undoBtn').disabled = !undoStack.length; }
+$('#undoBtn').onclick = () => {
+  if (!undoStack.length || exporting || dubRec) return;
+  if (playing) pause();
+  const s = undoStack.pop(); S.clips = s.clips; S.items = s.items; S.sel = s.sel; S.sfx = s.sfx; renderSfx();
+  lastCurId = undefined; renderItemsUI(); timelineChanged(); updUndo(); toast('↶ Undo');
+};
+
+/* ================= AUDIO ENGINE ================= */
+function ensureCtx() {
+  if (actx) return;
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+  master = actx.createGain(); master.connect(actx.destination);
+  recDest = actx.createMediaStreamDestination(); master.connect(recDest);
+  origGain = actx.createGain(); origGain.connect(master);
+  dubGain = actx.createGain(); dubGain.connect(master);
+  musicGain = actx.createGain(); musicGain.connect(master);
+  sfxGain = actx.createGain(); sfxGain.connect(master);
+  actx.createMediaElementSource(v).connect(origGain);
+  applyVols();
+}
+function applyVols() {
+  if (!actx) return;
+  const c = S.clips[ci];
+  origGain.gain.value = (dubRec && $('#muteOrig').checked) ? 0 : S.origVol * (c ? c.vol : 1);
+  dubGain.gain.value = S.dub ? S.dub.vol : 1;
+  if (S.music && !playing) musicGain.gain.value = S.music.vol;
+}
+const fxRate = fx => fx === 'chipmunk' ? 1.35 : fx === 'garau' ? 0.78 : 1;
+function dubRate() {
+  const d = S.dub; if (!d) return 1;
+  return d.fit === 'stretch' ? d.buffer.duration / Math.max(0.1, total() - d.offset) : fxRate(d.fx);
+}
+function impulse() {
+  if (impulseBuf) return impulseBuf;
+  const len = Math.floor(actx.sampleRate * 2.4), b = actx.createBuffer(2, len, actx.sampleRate);
+  for (let ch = 0; ch < 2; ch++) { const d = b.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+  return impulseBuf = b;
+}
+function distCurve(k) { const n = 1024, c = new Float32Array(n); for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; c[i] = (3 + k) * x * 20 * Math.PI / 180 / (Math.PI + k * Math.abs(x)); } return c; }
+function fxInput(fx, out) {
+  const A = actx, keep = (...n) => { fxNodes.push(...n); };
+  if (fx === 'echo') {
+    const i = A.createGain(), d = A.createDelay(1), fb = A.createGain(), wet = A.createGain();
+    d.delayTime.value = 0.22; fb.gain.value = 0.38; wet.gain.value = 0.6;
+    i.connect(out); i.connect(d); d.connect(fb); fb.connect(d); d.connect(wet); wet.connect(out); keep(i, d, fb, wet); return i;
+  }
+  if (fx === 'gua') {
+    const i = A.createGain(), c = A.createConvolver(), wet = A.createGain(); c.buffer = impulse(); wet.gain.value = 0.7;
+    i.connect(out); i.connect(c); c.connect(wet); wet.connect(out); keep(i, c, wet); return i;
+  }
+  if (fx === 'radio') {
+    const hp = A.createBiquadFilter(), lp = A.createBiquadFilter(), ws = A.createWaveShaper(), gn = A.createGain();
+    hp.type = 'highpass'; hp.frequency.value = 500; lp.type = 'lowpass'; lp.frequency.value = 3000; ws.curve = distCurve(8); gn.gain.value = 0.8;
+    hp.connect(lp); lp.connect(ws); ws.connect(gn); gn.connect(out); keep(hp, lp, ws, gn); return hp;
+  }
+  if (fx === 'robot') {
+    const rm = A.createGain(), osc = A.createOscillator(), boost = A.createGain();
+    rm.gain.value = 0; osc.frequency.value = 42; osc.connect(rm.gain); osc.start(); srcNodes.push(osc);
+    boost.gain.value = 1.7; rm.connect(boost); boost.connect(out); keep(rm, boost); return rm;
+  }
+  return out;
+}
+function startAudio(from) {
+  stopAudio();
+  const now = actx.currentTime, T = total(), d = S.dub;
+  if (d && d.buffer && !dubRec) {
+    const rate = dubRate(), dEnd = d.offset + d.buffer.duration / rate;
+    if (from < dEnd) {
+      const s = actx.createBufferSource(); s.buffer = d.buffer; s.playbackRate.value = rate;
+      s.connect(fxInput(d.fx, dubGain));
+      s.start(now + Math.max(0, d.offset - from), Math.max(0, (from - d.offset) * rate));
+      srcNodes.push(s);
+    }
+  }
+  for (const x of S.sfx) {
+    const L = x.buffer.duration; if (from >= x.start + L) continue;
+    const s = actx.createBufferSource(), gn = actx.createGain(); s.buffer = x.buffer; gn.gain.value = x.vol;
+    s.connect(gn); gn.connect(sfxGain); s.start(now + Math.max(0, x.start - from), Math.max(0, from - x.start));
+    srcNodes.push(s); fxNodes.push(gn);
+  }
+  const m = S.music;
+  if (m && m.buffer) {
+    const dur = m.buffer.duration, pos = m.skip + from;
+    const off = m.loop ? pos % dur : pos;
+    if (off < dur) {
+      const s = actx.createBufferSource(); s.buffer = m.buffer; s.loop = m.loop;
+      if (m.loop) { s.loopStart = Math.min(m.skip, dur - 0.5); s.loopEnd = dur; }
+      s.connect(musicGain); s.start(now, off); srcNodes.push(s);
+    }
+    const gg = musicGain.gain, vol = m.vol;
+    gg.cancelScheduledValues(0);
+    let fadeInEnd = now;
+    if (m.fade && from < 1) { gg.setValueAtTime(0, now); fadeInEnd = now + (1 - from); gg.linearRampToValueAtTime(vol, fadeInEnd); }
+    else gg.setValueAtTime(vol, now);
+    if (m.fade) { const end = now + (T - from), fs = end - 1.5; if (fs > fadeInEnd) { gg.setValueAtTime(vol, fs); gg.linearRampToValueAtTime(0, end); } }
+  }
+}
+function stopAudio() {
+  srcNodes.forEach(s => { try { s.stop(); } catch (e) {} }); srcNodes = [];
+  fxNodes.forEach(n => { try { n.disconnect(); } catch (e) {} }); fxNodes = [];
+  if (musicGain) { musicGain.gain.cancelScheduledValues(0); musicGain.gain.value = S.music ? S.music.vol : 1; }
+}
+
+/* ================= PLAYER ================= */
+async function loadClip(i, media) {
+  const c = S.clips[i]; if (!c) return;
+  ci = i;
+  if (c.type === 'image') { if (!v.paused) v.pause(); applyVols(); dirty = true; return; }
+  if (v.dataset.cid !== c.url) { v.src = c.url; v.dataset.cid = c.url; await waitEv(v, 'loadeddata', 6000); }
+  v.defaultPlaybackRate = c.speed; v.playbackRate = c.speed;
+  if (Math.abs(v.currentTime - media) > 0.02) { v.currentTime = media; await waitEv(v, 'seeked', 3000); }
+  applyVols(); dirty = true;
+}
+let qPending = null, qRun = null;
+function queueLoad(i, m) {
+  qPending = [i, m];
+  if (!qRun) qRun = (async () => { while (qPending) { const [a, b] = qPending; qPending = null; await loadClip(a, b); } qRun = null; })();
+  return qRun;
+}
+async function seekTo(t, fromStrip) {
+  if (!S.clips.length) { curT = 0; dirty = true; updTime(fromStrip); return; }
+  curT = clamp(t, 0, total());
+  const L = locate(curT);
+  updTime(fromStrip);
+  await queueLoad(L.i, L.local);
+  dirty = true; checkCurClip();
+}
+async function play(from) {
+  stopPreview();
+  if (!S.clips.length) return toast('Tambah video dulu');
+  ensureCtx();
+  if (actx.state !== 'running') { try { await actx.resume(); } catch (e) {} }
+  if (from == null) from = curT >= total() - 0.05 ? 0 : curT;
+  await seekTo(from); curT = from;
+  const c = S.clips[ci];
+  startAudio(from);
+  playing = true; setPlayBtn();
+  if (c.type === 'image') imgT0 = actx.currentTime - (from - clipStart(ci));
+  else { try { await v.play(); } catch (e) {} }
+}
+function pause() { playing = false; v.pause(); stopAudio(); setPlayBtn(); dirty = true; clearTimeout(pvTimer); }
+async function nextClip() {
+  switching = true; v.pause();
+  if (ci + 1 >= S.clips.length) { switching = false; finish(); return; }
+  try { await actx.suspend(); } catch (e) {}
+  if (recorder && recorder.state === 'recording') recorder.pause();
+  if (dubRec && dubRec.rec.state === 'recording') dubRec.rec.pause();
+  const n = ci + 1, c = S.clips[n];
+  await loadClip(n, c.in);
+  curT = clipStart(n); draw(curT);
+  if (c.type === 'image') imgT0 = actx.currentTime;
+  try { await actx.resume(); } catch (e) {}
+  if (recorder && recorder.state === 'paused') recorder.resume();
+  if (dubRec && dubRec.rec.state === 'paused') dubRec.rec.resume();
+  switching = false;
+  if (!exporting) checkCurClip();
+  if (playing && c.type !== 'image') { try { await v.play(); } catch (e) {} }
+}
+function finish() {
+  playing = false; v.pause(); stopAudio();
+  curT = total(); setPlayBtn(); dirty = true; updTime();
+  const f = onFinish; onFinish = null; if (f) f();
+}
+function setPlayBtn() { $('#playBtn').innerHTML = ic(dubRec ? 'stop' : playing ? 'pause' : 'play'); }
+function updTime(noStrip) {
+  const T = total();
+  $('#time').innerHTML = `<b>${fmt(curT)}</b> / ${fmt(T)}`;
+  if (!noStrip) syncStrip();
+  if (exporting) { const p = T ? Math.min(100, curT / T * 100) : 0; $('#expBar').style.width = p + '%'; $('#expPct').textContent = Math.floor(p) + '%'; }
+}
+v.addEventListener('seeked', () => dirty = true);
+v.addEventListener('loadeddata', () => dirty = true);
+function previewFrom(t, ms) {
+  play(Math.max(0, t)); clearTimeout(pvTimer);
+  pvTimer = setTimeout(() => { if (playing && !exporting && !dubRec) pause(); }, ms || 1600);
+}
+
+function tick() {
+  requestAnimationFrame(tick);
+  if (playing && !switching && ci >= 0 && S.clips[ci]) {
+    const c = S.clips[ci], len = clipLen(c);
+    const el = c.type === 'image' ? actx.currentTime - imgT0 : (v.currentTime - c.in) / c.speed;
+    curT = clipStart(ci) + Math.min(el, len);
+    if (c.type === 'image' ? el >= len : (v.currentTime >= c.out - 0.04 || v.ended)) nextClip();
+    updTime(); dirty = true;
+  }
+  if (dirty) { draw(curT); dirty = playing; }
+}
+
+/* ================= RENDER CANVAS ================= */
+function rr(x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+function draw(t) {
+  const k = Math.min(W, H) / 1080;
+  g.globalAlpha = 1; g.filter = 'none';
+  g.fillStyle = S.fit === 'color' ? S.bg : '#000'; g.fillRect(0, 0, W, H);
+  const c = S.clips[ci];
+  const ready = c && (c.type === 'image' ? true : (v.readyState >= 2 && v.videoWidth && v.dataset.cid === c.url));
+  if (ready) {
+    const src = c.type === 'image' ? c.img : v, [vw, vh] = dims(src);
+    const el = t - clipStart(ci), len = clipLen(c), next = S.clips[ci + 1], D = 0.4;
+    let scale = 1, dx = 0, dy = 0, rot = 0, black = 0, white = 0;
+    if (c.trans !== 'none' && el < D) {
+      const p = clamp(el / D, 0, 1);
+      if (c.trans === 'fade') black = 1 - p;
+      else if (c.trans === 'flash') white = 1 - p;
+      else if (c.trans === 'zoom') { scale = 1 + 0.35 * (1 - p) * (1 - p); black = (1 - p) * 0.4; }
+      else if (c.trans === 'slide') dx = W * Math.pow(1 - p, 3);
+    }
+    if (next && next.trans === 'fade' && len - el < D) black = Math.max(black, 1 - clamp((len - el) / D, 0, 1));
+    if (c.type === 'image' && c.kb && (!c.motion || c.motion === 'none')) scale *= 1 + 0.12 * clamp(el / len, 0, 1);
+    { const pr = clamp(el / len, 0, 1), bt = S.beat || 0.5, bp = (el % bt) / bt, e5 = 1 - Math.pow(1 - clamp(el / 0.5, 0, 1), 3);
+      switch (c.motion) {
+        case 'zin': scale *= 1 + 0.16 * pr; break;
+        case 'zout': scale *= 1.16 - 0.16 * pr; break;
+        case 'panl': scale *= 1.15; dx += W * 0.06 * (1 - 2 * pr); break;
+        case 'panr': scale *= 1.15; dx -= W * 0.06 * (1 - 2 * pr); break;
+        case 'pulse': scale *= 1.03 + 0.07 * Math.exp(-bp * 7); break;
+        case 'shake': { const a = Math.exp(-bp * 9); scale *= 1.06; dx += Math.sin(el * 83) * W * 0.018 * a; dy += Math.cos(el * 67) * H * 0.01 * a; rot += Math.sin(el * 51) * 0.02 * a; break; }
+        case 'spin': rot += (1 - e5) * 0.35; scale *= 1 + 0.35 * (1 - e5); break;
+      }
+      if (c.flash && el > 0.05) white = Math.max(white, 0.22 * Math.exp(-bp * 12));
+    }
+    const flt = filterStr(c);
+    if (S.fit === 'blur') {
+      const sw = small.width, sh = small.height, sc = Math.max(sw / vw, sh / vh);
+      sg.filter = flt; sg.drawImage(src, (sw - vw * sc) / 2, (sh - vh * sc) / 2, vw * sc, vh * sc); sg.filter = 'none';
+      g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+      g.drawImage(small, 0, 0, W, H);
+      g.fillStyle = 'rgba(0,0,0,.3)'; g.fillRect(0, 0, W, H);
+    }
+    const sc = (S.fit === 'cover' ? Math.max(W / vw, H / vh) : Math.min(W / vw, H / vh)) * scale;
+    const dw = vw * sc, dh = vh * sc;
+    g.filter = flt;
+    if (rot) { g.save(); g.translate(W / 2 + dx, H / 2 + dy); g.rotate(rot); g.drawImage(src, -dw / 2, -dh / 2, dw, dh); g.restore(); }
+    else g.drawImage(src, (W - dw) / 2 + dx, (H - dh) / 2 + dy, dw, dh);
+    g.filter = 'none';
+    if (black > 0) { g.fillStyle = `rgba(0,0,0,${black})`; g.fillRect(0, 0, W, H); }
+    if (white > 0) { g.fillStyle = `rgba(255,255,255,${white})`; g.fillRect(0, 0, W, H); }
+  }
+  for (const x of S.items) drawItem(x, t, k);
+}
+const easeBack = p => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+function animState(x, t) {
+  const a = x.anim, e = t - x.start, p = clamp(e / 0.4, 0, 1), ease = 1 - Math.pow(1 - p, 3);
+  let alpha = 1, scale = 1, dy = 0, rot = 0, chars = Infinity;
+  if (a === 'fade') alpha = p;
+  else if (a === 'pop') { scale = p < 1 ? Math.max(0.05, 0.3 + 0.7 * easeBack(p)) : 1; alpha = Math.min(1, p * 3); }
+  else if (a === 'slide') { dy = (1 - ease) * 0.08 * H; alpha = p; }
+  else if (a === 'zoom') { scale = 1 + (1 - ease) * 1.2; alpha = p; }
+  else if (a === 'typing') chars = Math.floor(e / 0.06);
+  else if (a === 'bounce') dy = -Math.abs(Math.sin(e * 5)) * 0.015 * H;
+  else if (a === 'pulse') scale = 1 + 0.07 * Math.sin(e * 6);
+  else if (a === 'shake') rot = 0.07 * Math.sin(e * 14);
+  if (x.end > 0 && ['fade', 'pop', 'slide', 'zoom'].includes(a)) alpha *= clamp((x.end - t) / 0.3, 0, 1);
+  return { alpha, scale, dy, rot, chars };
+}
+function drawItem(x, t, k) {
+  x._box = null;
+  const end = x.end > 0 ? x.end : Infinity;
+  if (t < x.start || t >= end) return;
+  const A = (playing || exporting) ? animState(x, t) : { alpha: 1, scale: 1, dy: 0, rot: 0, chars: Infinity }, cx = x.x * W, cy = x.y * H;
+  let bw = 0, bh = 0;
+  g.save();
+  g.globalAlpha = A.alpha * (x.kind === 'image' ? x.opacity : 1);
+  g.translate(cx, cy + A.dy); if (A.rot) g.rotate(A.rot); if (A.scale !== 1) g.scale(A.scale, A.scale);
+  if (x.kind === 'image') {
+    const [iw, ih] = dims(x.img); bw = x.size * k; bh = bw * ih / iw;
+    g.drawImage(x.img, -bw / 2, -bh / 2, bw, bh);
+  } else if (x.kind === 'emoji') {
+    const fs = x.size * k; bw = bh = fs * 1.2;
+    g.font = `${fs}px "Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif`;
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(x.text, 0, fs * 0.05);
+  } else { const r = drawTextBlock(x, k, A.chars); bw = r.w; bh = r.h; }
+  g.restore();
+  x._box = { x: cx - bw / 2, y: cy - bh / 2, w: bw, h: bh };
+  if (!exporting && S.sel === x.id) {
+    g.setLineDash([12 * k, 8 * k]); g.lineWidth = 3 * k; g.strokeStyle = '#CBA258';
+    g.strokeRect(x._box.x - 4 * k, x._box.y - 4 * k, bw + 8 * k, bh + 8 * k); g.setLineDash([]);
+  }
+}
+function drawTextBlock(x, k, chars) {
+  const fs = x.size * k;
+  g.font = (x.bold ? 'bold ' : '') + fs + 'px ' + x.font; g.textAlign = 'left'; g.textBaseline = 'middle';
+  const lines = (x.text || ' ').split('\n'), lh = fs * 1.25, pad = fs * 0.35;
+  const widths = lines.map(l => g.measureText(l).width), wMax = Math.max(...widths, fs * 0.5);
+  const h = lines.length * lh, bw = wMax + pad * 2, bh = h + pad * 2;
+  if (x.style === 'bgDark' || x.style === 'bgLight' || x.style === 'bgColor') {
+    g.fillStyle = x.style === 'bgDark' ? 'rgba(0,0,0,.65)' : x.style === 'bgLight' ? 'rgba(255,255,255,.94)' : x.bg;
+    rr(-bw / 2, -bh / 2, bw, bh, fs * 0.3); g.fill();
+  }
+  let left = chars;
+  lines.forEach((full, i) => {
+    let l = full;
+    if (left !== Infinity) { l = full.slice(0, Math.max(0, left)); left -= full.length; }
+    if (!l) return;
+    const y = -h / 2 + lh * (i + 0.5), x0 = -widths[i] / 2;
+    if (x.style === 'stroke') { g.lineJoin = 'round'; g.lineWidth = fs * 0.16; g.strokeStyle = '#000'; g.strokeText(l, x0, y); }
+    if (x.style === 'neon') {
+      g.shadowColor = x.color; g.shadowBlur = fs * 0.55; g.fillStyle = '#ffffff';
+      g.fillText(l, x0, y); g.fillText(l, x0, y);
+    } else {
+      if (x.style === 'none') { g.shadowColor = 'rgba(0,0,0,.75)'; g.shadowBlur = fs * 0.18; }
+      g.fillStyle = x.color; g.fillText(l, x0, y);
+    }
+    g.shadowBlur = 0; g.shadowColor = 'transparent';
+  });
+  return { w: bw, h: bh };
+}
+function setSize() {
+  const [a, b] = S.ratio.split(':').map(Number), L = S.res === 720 ? 720 : 1080;
+  if (a <= b) { W = L; H = Math.round(L * b / a); } else { H = L; W = Math.round(L * a / b); }
+  W -= W % 2; H -= H % 2;
+  cv.width = W; cv.height = H;
+  small.width = Math.max(8, Math.round(W / 30)); small.height = Math.max(8, Math.round(H / 30));
+  fitCanvas(); dirty = true;
+}
+function fitCanvas() {
+  const st = $('#stage').getBoundingClientRect(); if (!st.width) return;
+  const sc = Math.min((st.width - 16) / W, (st.height - 14) / H);
+  cv.style.width = Math.floor(W * sc) + 'px'; cv.style.height = Math.floor(H * sc) + 'px';
+}
+
+/* ================= SERET & CUBIT ================= */
+const ptrs = new Map(); let drag = null, pinch = null;
+function cpt(e) { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * H }; }
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+cv.addEventListener('pointerdown', e => {
+  if (exporting) return;
+  const p = cpt(e); ptrs.set(e.pointerId, p);
+  try { cv.setPointerCapture(e.pointerId); } catch (er) {}
+  const it = selItem();
+  if (ptrs.size === 2 && it) { const [a, b] = [...ptrs.values()]; pinch = { d0: dist(a, b) || 1, s0: it.size }; drag = null; return; }
+  if (ptrs.size > 1) return;
+  for (let i = S.items.length - 1; i >= 0; i--) {
+    const x = S.items[i], b = x._box;
+    if (b && p.x >= b.x - 10 && p.x <= b.x + b.w + 10 && p.y >= b.y - 10 && p.y <= b.y + b.h + 10) {
+      pushUndo(true);
+      S.sel = x.id; drag = { id: x.id, dx: p.x - x.x * W, dy: p.y - x.y * H };
+      showTab(x.kind === 'text' ? 'teks' : 'stk'); renderItemsUI(); dirty = true; return;
+    }
+  }
+  if (S.sel) { S.sel = null; renderItemsUI(); dirty = true; }
+});
+cv.addEventListener('pointermove', e => {
+  if (!ptrs.has(e.pointerId)) return;
+  const p = cpt(e); ptrs.set(e.pointerId, p);
+  const it = selItem(); if (!it) return;
+  if (pinch && ptrs.size >= 2) {
+    const [a, b] = [...ptrs.values()];
+    it.size = clamp(pinch.s0 * dist(a, b) / pinch.d0, 16, 1600); dirty = true;
+    const sz = document.querySelector('[data-k="size"]'), lb = document.querySelector('[data-sz]');
+    if (sz) sz.value = it.size; if (lb) lb.textContent = Math.round(it.size);
+  } else if (drag) {
+    it.x = clamp((p.x - drag.dx) / W, 0.02, 0.98); it.y = clamp((p.y - drag.dy) / H, 0.02, 0.98); dirty = true;
+  }
+});
+const ptrEnd = e => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; if (!ptrs.size) drag = null; };
+cv.addEventListener('pointerup', ptrEnd); cv.addEventListener('pointercancel', ptrEnd);
+
+/* ================= TIMELINE STRIP ================= */
+const strip = $('#strip'); let progScroll = -1;
+function syncStrip() {
+  const sl = Math.round(curT * pps);
+  if (Math.abs(strip.scrollLeft - sl) > 0.5) { progScroll = sl; strip.scrollLeft = sl; }
+}
+strip.addEventListener('scroll', () => {
+  const sl = strip.scrollLeft;
+  if (Math.abs(sl - progScroll) <= 1) return;
+  progScroll = -1;
+  if (exporting || dubRec || !S.clips.length) return;
+  if (playing) pause();
+  seekTo(sl / pps, true);
+});
+function cssFilter(c) { const f = filterStr(c); return f === 'none' ? 'none' : f; }
+function renderStrip() {
+  const T = total(), pad = Math.round($('#stripWrap').clientWidth / 2), tr = $('#track');
+  tr.style.paddingLeft = pad + 'px'; tr.style.paddingRight = pad + 'px'; tr.style.width = (T * pps + pad * 2) + 'px';
+  const cur = curClip();
+  let h = '<div class="lane" style="height:42px">';
+  S.clips.forEach((c, i) => {
+    h += `<div class="blk ${cur && cur.id === c.id ? 'on' : ''}" data-cid="${c.id}" data-ci="${i}" style="left:${clipStart(i) * pps}px;width:${Math.max(4, clipLen(c) * pps - 2)}px;background-image:url('${c.thumb || ''}');filter:${cssFilter(c)}">`
+      + (c.trans !== 'none' ? '<i class="tri">✨</i>' : '') + (c.type === 'image' ? '<i class="ico">🖼</i>' : '') + (c.vol === 0 && c.type !== 'image' ? '<i class="no">🔇</i>' : '') + '</div>';
+  });
+  h += '</div>';
+  const lanes = [], bars = [];
+  [...S.items].sort((a, b) => a.start - b.start).forEach(x => {
+    const s = x.start, e = x.end > 0 ? x.end : T;
+    let ln = lanes.findIndex(le => le <= s + 0.01); if (ln < 0) { ln = lanes.length < 3 ? lanes.length : 2; }
+    lanes[ln] = Math.max(lanes[ln] || 0, e);
+    const lab = x.kind === 'text' ? (x.text.split('\n')[0] || 'Teks') : x.kind === 'emoji' ? x.text : '🖼 Gambar';
+    bars.push(`<div class="bar ${x.kind === 'text' ? 't' : 's'} ${x.id === S.sel ? 'on' : ''}" data-item="${x.id}" style="top:${ln * 15}px;left:${s * pps}px;width:${Math.max(14, (e - s) * pps - 2)}px">${esc(lab)}</div>`);
+  });
+  if (bars.length) h += `<div class="lane" style="height:${lanes.length * 15}px">${bars.join('')}</div>`;
+  const ab = [];
+  if (S.dub && T) { const r = dubRate(), s = Math.min(S.dub.offset, T), e = Math.min(T, S.dub.offset + S.dub.buffer.duration / r); if (e > s) ab.push(`<div class="bar d" style="top:0;left:${s * pps}px;width:${Math.max(10, (e - s) * pps - 2)}px">🎙 Dubbing</div>`); }
+  const sfxRow = ab.length;
+  const sx = S.sfx.filter(x => x.start < T).map(x => `<div class="bar x ${x.id === selSfx ? 'on' : ''}" data-sfx="${x.id}" style="top:${sfxRow * 15}px;left:${x.start * pps}px;width:${Math.max(14, Math.min(x.buffer.duration, T - x.start) * pps - 2)}px">🔔 ${esc(x.name)}</div>`);
+  if (sx.length) ab.push(...sx);
+  const rows = sfxRow + (sx.length ? 1 : 0);
+  if (S.music && T) ab.push(`<div class="bar m" style="top:${rows * 15}px;left:0;width:${T * pps - 2}px">🎵 ${esc(S.music.name)}</div>`);
+  const nrows = rows + (S.music && T ? 1 : 0);
+  if (ab.length) h += `<div class="lane" style="height:${nrows * 15}px">${ab.join('')}</div>`;
+  tr.innerHTML = h;
+  syncStrip();
+}
+$('#track').addEventListener('click', e => {
+  const b = e.target.closest('[data-item]');
+  if (b) {
+    const x = S.items.find(q => q.id === +b.dataset.item); if (!x) return;
+    S.sel = x.id; showTab(x.kind === 'text' ? 'teks' : 'stk'); renderItemsUI();
+    const end = x.end > 0 ? x.end : Infinity; if (curT < x.start || curT >= end) { if (playing) pause(); seekTo(x.start); }
+    dirty = true; return;
+  }
+  const sb = e.target.closest('[data-sfx]');
+  if (sb) { const x = S.sfx.find(q => q.id === +sb.dataset.sfx); if (!x) return; selSfx = x.id; showTab('suara'); renderSfx(); renderStrip(); if (playing) pause(); seekTo(x.start); return; }
+  const k = e.target.closest('[data-ci]');
+  if (k) { if (playing) pause(); const i = +k.dataset.ci; if (curClip() !== S.clips[i]) seekTo(clipStart(i) + 0.01); showTab('klip'); }
+});
+function markStripCur() { const c = curClip(); $$('.blk').forEach(b => b.classList.toggle('on', !!c && +b.dataset.cid === c.id)); }
+$('#zoomBtn').onclick = () => { pps = pps === 60 ? 120 : pps === 120 ? 30 : 60; renderStrip(); toast('Zoom timeline ' + (pps / 60) + 'x'); };
+$('#toStart').onclick = () => { if (exporting || dubRec) return; if (playing) pause(); seekTo(0); };
+
+/* ================= TAB & TRANSPORT ================= */
+function showTab(n) {
+  $$('nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === n));
+  $$('.tab').forEach(s => s.classList.toggle('on', s.id === 't-' + n));
+  $('main').scrollTop = 0;
+  if (n === 'suara') renderDub();
+  if (n === 'export') renderExport();
+}
+$$('nav button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+$('#hdrExport').onclick = () => showTab('export');
+$('#playBtn').onclick = () => { if (exporting) return; if (dubRec) return stopDubRec(); clearTimeout(pvTimer); playing ? pause() : play(); };
+
+function checkCurClip() {
+  const c = curClip(), id = c ? c.id : null;
+  if (id !== lastCurId) { lastCurId = id; renderClipPanel(); renderEfek(); markStripCur(); }
+}
+function timelineChanged() {
+  if (!S.clips.length) { v.removeAttribute('src'); v.dataset.cid = ''; v.load(); ci = -1; }
+  curT = clamp(curT, 0, total());
+  lastCurId = undefined;
+  renderStrip(); seekTo(curT); renderExport(); renderDubInfoOnly();
+  if (!S.clips.length) { renderClipPanel(); renderEfek(); }
+  $('#empty').style.display = S.clips.length ? 'none' : 'flex';
+  dirty = true;
+}
+
+/* ================= KLIP ================= */
+function loadImg(url) {
+  return new Promise(res => {
+    const im = new Image();
+    im.onload = () => {
+      const mx = Math.max(im.naturalWidth, im.naturalHeight);
+      if (mx <= 2160) return res(im);
+      const sc = 2160 / mx, c = document.createElement('canvas');
+      c.width = Math.round(im.naturalWidth * sc); c.height = Math.round(im.naturalHeight * sc);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c);
+    };
+    im.onerror = () => res(null); im.src = url;
+  });
+}
+function thumbOf(src) {
+  const [sw, sh] = dims(src), c = document.createElement('canvas'); c.width = 72; c.height = 128;
+  const x = c.getContext('2d'), sc = Math.max(72 / sw, 128 / sh);
+  try { x.drawImage(src, (72 - sw * sc) / 2, (128 - sh * sc) / 2, sw * sc, sh * sc); return c.toDataURL('image/jpeg', 0.6); } catch (e) { return ''; }
+}
+function probe(url) {
+  return new Promise(res => {
+    const t = document.createElement('video'); let ok = false;
+    t.muted = true; t.playsInline = true; t.preload = 'auto'; t.src = url;
+    t.onloadedmetadata = () => { t.currentTime = Math.min(0.5, (t.duration || 1) / 2); };
+    t.onseeked = () => {
+      if (ok) return; ok = true;
+      const th = thumbOf(t);
+      res(isFinite(t.duration) && t.duration > 0 ? { dur: t.duration, thumb: th } : null);
+      t.removeAttribute('src'); t.load();
+    };
+    t.onerror = () => { if (!ok) { ok = true; res(null); } };
+    setTimeout(() => { if (!ok) { ok = true; res(isFinite(t.duration) && t.duration > 0 ? { dur: t.duration, thumb: '' } : null); } }, 8000);
+  });
+}
+const mkClip = o => ({ id: uid++, filter: 'none', adj: { b: 100, c: 100, s: 100 }, trans: 'none', motion: 'none', flash: false, vol: 1, kb: true, speed: 1, in: 0, ...o });
+$('#emptyAdd').onclick = () => $('#fMedia').click();
+async function importFiles(files) {
+  const out = []; busy(L('Memuatkan fail…', 'Loading files…'));
+  for (let k = 0; k < files.length; k++) {
+    const f = files[k], url = URL.createObjectURL(f);
+    $('#busyTxt').textContent = L('Memuatkan fail…', 'Loading files…') + ' ' + (k + 1) + '/' + files.length;
+    if ((f.type || '').startsWith('image/') || /\.(jpe?g|png|webp|gif|bmp|heic)$/i.test(f.name)) {
+      const img = await loadImg(url);
+      if (!img) { toast(L('Gagal baca ', 'Could not read ') + f.name); continue; }
+      out.push(mkClip({ type: 'image', url, img, name: f.name, dur: 60, out: 3, thumb: thumbOf(img) }));
+    } else {
+      const info = await probe(url);
+      if (!info) { toast(L('Gagal baca ', 'Could not read ') + f.name); continue; }
+      out.push(mkClip({ type: 'video', url, name: f.name, dur: info.dur, out: info.dur, thumb: info.thumb }));
+    }
+  }
+  unbusy(); return out;
+}
+$('#fMedia').onchange = async e => {
+  const files = [...e.target.files]; e.target.value = '';
+  if (!files.length) return;
+  if (playing) pause();
+  pushUndo(true);
+  const wasEmpty = !S.clips.length;
+  S.clips.push(...await importFiles(files));
+  if (wasEmpty) curT = 0;
+  timelineChanged();
+};
+const meta = c => c.type === 'image' ? `Gambar · <b>${clipLen(c).toFixed(1)}s</b>` : `Asal ${c.dur.toFixed(1)}s → <b>${clipLen(c).toFixed(1)}s</b>`;
+function renderClipPanel() {
+  const el = $('#clipEd'), c = curClip();
+  if (!c) {
+    el.innerHTML = `<div class="card"><div class="hrow" style="margin:0"><h3>${ic('film')}Klip</h3><button class="btn pri" data-c="add">${ic('plus')}Tambah</button></div></div>`;
+    return;
+  }
+  const i = S.clips.indexOf(c), V = c.type !== 'image';
+  el.innerHTML = `<div class="card">
+    <div class="cur"><div class="th" style="background-image:url('${c.thumb}');filter:${cssFilter(c)}"></div>
+      <div style="min-width:0;flex:1"><div class="t1">Klip ${i + 1} / ${S.clips.length}<span class="badge">${V ? 'VIDEO' : 'GAMBAR'}</span></div><div class="muted ell">${esc(c.name)}</div><div class="muted" data-meta>${meta(c)}</div></div></div>
+    <div class="tools">
+      ${tool('add', 'plus', 'Tambah', 'add')}${tool('split', 'scissors', 'Split')}${tool('dup', 'copy', 'Salin')}
+      ${tool('left', 'left', 'Kiri')}${tool('right', 'right', 'Kanan')}${tool('del', 'trash', 'Padam', 'red')}</div>
+    ${V ? `<label class="f">Mula <b data-v="in">${c.in.toFixed(1)}s</b></label><input type="range" data-r="in" min="0" max="${c.dur}" step="0.1" value="${c.in}">
+      <label class="f">Tamat <b data-v="out">${c.out.toFixed(1)}s</b></label><input type="range" data-r="out" min="0" max="${c.dur}" step="0.1" value="${c.out}">
+      <label class="f">Kelajuan</label><div class="chips">${chipsHtml([0.5, 0.75, 1, 1.5, 2, 3].map(s => [s, s + 'x']), c.speed, 'speed')}</div>
+      <label class="f">Volume klip <b data-v="vol">${Math.round(c.vol * 100)}%</b></label>
+      <div class="row"><input type="range" data-r="vol" min="0" max="2" step="0.05" value="${c.vol}"><button class="btn soft" data-c="mute" style="flex:0 0 auto">${ic(c.vol > 0 ? 'mute' : 'vol')}${c.vol > 0 ? 'Senyap' : 'Buka'}</button></div>`
+    : `<label class="f">Tempoh gambar <b data-v="out">${c.out.toFixed(1)}s</b></label><input type="range" data-r="imgdur" min="0.5" max="15" step="0.5" value="${c.out}">
+      <label class="check"><input type="checkbox" data-r="kb" ${c.kb ? 'checked' : ''}> Zoom perlahan (gaya Ken Burns)</label>`}
+  </div>`;
+}
+const cE = $('#clipEd');
+cE.addEventListener('pointerdown', e => { if (e.target.dataset.r) pushUndo(); });
+cE.addEventListener('input', e => {
+  const r = e.target.dataset.r; if (!r) return;
+  const c = curClip(); if (!c) return;
+  const i = S.clips.indexOf(c), val = parseFloat(e.target.value);
+  if (playing) pause();
+  if (r === 'vol') { c.vol = val; cE.querySelector('[data-v="vol"]').textContent = Math.round(val * 100) + '%'; applyVols(); return; }
+  if (r === 'kb') { c.kb = e.target.checked; dirty = true; return; }
+  if (r === 'imgdur') { c.out = val; cE.querySelector('[data-v="out"]').textContent = val.toFixed(1) + 's'; cE.querySelector('[data-meta]').innerHTML = meta(c); curT = clamp(curT, clipStart(i), clipStart(i) + clipLen(c) - 0.01); updTime(); return; }
+  if (r === 'in') { c.in = clamp(Math.min(val, c.out - 0.2), 0, c.dur); e.target.value = c.in; }
+  else { c.out = clamp(Math.max(val, c.in + 0.2), 0, c.dur); e.target.value = c.out; }
+  cE.querySelector(`[data-v="${r}"]`).textContent = (r === 'in' ? c.in : c.out).toFixed(1) + 's';
+  cE.querySelector('[data-meta]').innerHTML = meta(c);
+  const m = r === 'in' ? c.in : Math.max(c.in, c.out - 0.05);
+  curT = clipStart(i) + (m - c.in) / c.speed; updTime();
+  queueLoad(i, m);
+});
+cE.addEventListener('change', e => { if (e.target.dataset.r && e.target.dataset.r !== 'vol') { renderStrip(); renderExport(); renderDubInfoOnly(); } else renderStrip(); });
+cE.addEventListener('click', e => {
+  const b0 = e.target.closest('[data-c="add"]');
+  if (b0) { $('#fMedia').click(); return; }
+  const c = curClip(); if (!c) return;
+  const sp = e.target.closest('[data-speed]');
+  if (sp) {
+    pushUndo(true); if (playing) pause();
+    const i = S.clips.indexOf(c), rel = (curT - clipStart(i)) * c.speed;
+    c.speed = +sp.dataset.speed; curT = clipStart(i) + rel / c.speed;
+    cE.querySelectorAll('[data-speed]').forEach(b => b.classList.toggle('on', b === sp));
+    cE.querySelector('[data-meta]').innerHTML = meta(c);
+    timelineChanged(); return;
+  }
+  const b = e.target.closest('[data-c]'); if (!b) return;
+  const a = b.dataset.c, C = S.clips, i = C.indexOf(c), st = clipStart(i);
+  if (playing) pause();
+  if (a === 'mute') { pushUndo(true); c.vol = c.vol > 0 ? 0 : 1; applyVols(); renderClipPanel(); renderStrip(); return; }
+  pushUndo(true);
+  if (a === 'split') {
+    const el = curT - st;
+    if (c.type === 'image') {
+      if (el < 0.3 || c.out - el < 0.3) return toast('Terlalu dekat dengan hujung klip');
+      C.splice(i + 1, 0, { ...c, id: uid++, adj: { ...c.adj }, in: 0, out: c.out - el, trans: 'none' }); c.out = el;
+    } else {
+      const m = c.in + el * c.speed;
+      if (m - c.in < 0.2 || c.out - m < 0.2) return toast('Gerakkan timeline ke tengah klip dulu');
+      C.splice(i + 1, 0, { ...c, id: uid++, adj: { ...c.adj }, in: m, trans: 'none' }); c.out = m;
+    }
+    toast('✂ Klip dipotong');
+  } else if (a === 'dup') { C.splice(i + 1, 0, { ...c, id: uid++, adj: { ...c.adj } }); toast('Klip disalin'); }
+  else if (a === 'left' || a === 'right') {
+    const j = a === 'left' ? i - 1 : i + 1; if (j < 0 || j >= C.length) return toast(a === 'left' ? 'Sudah klip pertama' : 'Sudah klip terakhir');
+    const rel = curT - st; [C[i], C[j]] = [C[j], C[i]]; curT = clipStart(j) + rel;
+  } else if (a === 'del') { C.splice(i, 1); curT = Math.min(st, total()); toast('Dipadam (tekan ↶ untuk undo)'); }
+  timelineChanged();
+});
+
+/* Kanvas */
+function renderCanvasUI() {
+  $('#ratioGrid').innerHTML = RATIOS.map(([r, n, w, h]) => `<button class="${S.ratio === r ? 'on' : ''}" data-ratio="${r}"><i style="width:${w}px;height:${h}px"></i>${r} ${n}</button>`).join('');
+  $('#fitChips').innerHTML = chipsHtml(FITS, S.fit, 'fit');
+  $('#bgRowC').style.display = S.fit === 'color' ? '' : 'none';
+}
+$('#ratioGrid').onclick = e => { const b = e.target.closest('[data-ratio]'); if (!b) return; S.ratio = b.dataset.ratio; setSize(); renderCanvasUI(); renderExport(); };
+$('#fitChips').onclick = e => { const b = e.target.closest('[data-fit]'); if (!b) return; S.fit = b.dataset.fit; renderCanvasUI(); dirty = true; };
+$('#bgColor').oninput = e => { S.bg = e.target.value; dirty = true; };
+
+/* ================= EFEK ================= */
+function renderEfek() {
+  const c = curClip(), el = $('#efekEd');
+  if (!c) { el.innerHTML = `<div class="card"><h3>${ic('magic')}Efek</h3><p class="muted" style="margin:8px 0 0">Tambah video dulu untuk guna filter & transisi.</p></div>`; return; }
+  const i = S.clips.indexOf(c), a = c.adj;
+  el.innerHTML = `<div class="card"><div class="hrow"><h3>${ic('palette')}Filter <span class="muted">· Klip ${i + 1}</span></h3></div>
+    <div class="fgrid">${Object.entries(FILTERS).map(([k, [n, f]]) => `<button class="fitb ${c.filter === k ? 'on' : ''}" data-f="${k}"><div style="background-image:url('${c.thumb}');filter:${f || 'none'}"></div>${n}</button>`).join('')}</div>
+    <label class="f">Kecerahan <b data-av="b">${a.b}%</b></label><input type="range" data-adj="b" min="50" max="150" value="${a.b}">
+    <label class="f">Kontras <b data-av="c">${a.c}%</b></label><input type="range" data-adj="c" min="50" max="150" value="${a.c}">
+    <label class="f">Ketepuan warna <b data-av="s">${a.s}%</b></label><input type="range" data-adj="s" min="0" max="200" value="${a.s}">
+    <div class="row" style="margin-top:12px"><button class="btn" data-e="reset">${ic('reset')}Set semula</button><button class="btn soft" data-e="fall">${ic('layers')}Semua klip</button></div></div>
+  <div class="card"><div class="hrow"><h3>${ic('sparkle')}Transisi masuk <span class="muted">· Klip ${i + 1}</span></h3></div>
+    <div class="chips">${chipsHtml(TRANS, c.trans, 'tr')}</div>
+    <p class="muted" style="margin:6px 0 10px">${i === 0 ? 'Klip pertama: jadi kesan pembukaan video.' : 'Kesan berlaku semasa masuk ke klip ini.'}</p>
+    <button class="btn soft" data-e="tall">${ic('layers')}Guna pada semua klip</button></div>
+  <div class="card"><div class="hrow"><h3>${ic('move')}Gerakan <span class="muted">· Klip ${i + 1}</span></h3></div>
+    <div class="chips">${chipsHtml(MOTIONS, c.motion || 'none', 'mo')}</div>
+    <label class="check"><input type="checkbox" data-fl ${c.flash ? 'checked' : ''}> Kilat ikut beat</label>
+    <button class="btn soft" data-e="mall">${ic('layers')}Guna pada semua klip</button></div>`;
+}
+const eE = $('#efekEd');
+eE.addEventListener('pointerdown', e => { if (e.target.dataset.adj) pushUndo(); });
+eE.addEventListener('input', e => {
+  const k = e.target.dataset.adj; if (!k) return;
+  const c = curClip(); c.adj[k] = +e.target.value; eE.querySelector(`[data-av="${k}"]`).textContent = c.adj[k] + '%'; dirty = true;
+});
+eE.addEventListener('change', e => { if (e.target.dataset.adj) { renderStrip(); renderClipPanel(); } });
+eE.addEventListener('change', e => { if (e.target.dataset.fl !== undefined) { const c = curClip(); if (!c) return; pushUndo(true); c.flash = e.target.checked; dirty = true; } });
+eE.addEventListener('click', e => {
+  const mo = e.target.closest('[data-mo]');
+  if (mo) { const c = curClip(); if (!c) return; pushUndo(true); c.motion = mo.dataset.mo; eE.querySelectorAll('[data-mo]').forEach(x => x.classList.toggle('on', x === mo)); previewFrom(clipStart(S.clips.indexOf(c)), 1800); return; }
+  const ma = e.target.closest('[data-e="mall"]');
+  if (ma) { const c = curClip(); if (!c) return; pushUndo(true); S.clips.forEach(x => { x.motion = c.motion; x.flash = c.flash; }); toast(L('Gerakan digunakan pada semua klip', 'Motion applied to all clips')); return; }
+  const c = curClip(); if (!c) return;
+  const f = e.target.closest('[data-f]'), t = e.target.closest('[data-tr]'), b = e.target.closest('[data-e]');
+  if (f) { pushUndo(true); c.filter = f.dataset.f; eE.querySelectorAll('[data-f]').forEach(x => x.classList.toggle('on', x === f)); dirty = true; renderStrip(); renderClipPanel(); }
+  else if (t) { pushUndo(true); c.trans = t.dataset.tr; eE.querySelectorAll('[data-tr]').forEach(x => x.classList.toggle('on', x === t)); renderStrip(); if (c.trans !== 'none') { const i = S.clips.indexOf(c); previewFrom(clipStart(i) - (i ? 0.6 : 0), 1500); } }
+  else if (b) {
+    pushUndo(true);
+    if (b.dataset.e === 'reset') { c.filter = 'none'; c.adj = { b: 100, c: 100, s: 100 }; }
+    else if (b.dataset.e === 'fall') { S.clips.forEach(x => { x.filter = c.filter; x.adj = { ...c.adj }; }); toast('Filter digunakan pada semua klip'); }
+    else if (b.dataset.e === 'tall') { S.clips.forEach(x => { x.trans = c.trans; }); toast('Transisi digunakan pada semua klip'); }
+    renderEfek(); renderClipPanel(); renderStrip(); dirty = true;
+  }
+});
+
+/* ================= TEKS & STIKER ================= */
+function addItem(o) {
+  pushUndo(true);
+  const x = { id: uid++, x: 0.5, y: 0.5, start: newStart(), end: 0, anim: 'none', opacity: 1, ...o };
+  S.items.push(x); S.sel = x.id; renderItemsUI(); renderStrip(); dirty = true;
+  if (curT < x.start) seekTo(x.start);
+  return x;
+}
+$('#addText').onclick = () => addItem({ kind: 'text', text: L('Tulis ayat di sini', 'Type your text here'), y: 0.3, size: 72, color: '#ffffff', font: 'sans-serif', bold: true, style: 'stroke', bg: '#00704A', anim: 'pop' });
+$('#tplRow').innerHTML = TPL.map((t, i) => `<button data-tpl="${i}"><b style="${t.css}">Aa</b><small>${t.n}</small></button>`).join('');
+$('#tplRow').onclick = e => {
+  const b = e.target.closest('[data-tpl]'); if (!b) return;
+  const t = TPL[+b.dataset.tpl], x = selItem();
+  if (x && x.kind === 'text') { pushUndo(true); Object.assign(x, t.p); renderItemsUI(); renderStrip(); dirty = true; toast('Gaya "' + t.n + '" digunakan'); }
+  else addItem({ kind: 'text', text: L('Tulis ayat di sini', 'Type your text here'), y: 0.3, bg: '#00704A', anim: 'pop', ...t.p });
+};
+$('#egrid').innerHTML = EMOJI.map(e => `<button data-emo="${e}">${e}</button>`).join('');
+$('#egrid').onclick = e => { const b = e.target.closest('[data-emo]'); if (b) addItem({ kind: 'emoji', text: b.dataset.emo, size: 180, anim: 'pop' }); };
+$('#addOvImg').onclick = () => $('#fOv').click();
+$('#fOv').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  const img = await loadImg(URL.createObjectURL(f));
+  if (!img) return toast('Gagal baca gambar');
+  addItem({ kind: 'image', img, size: 420, anim: 'fade', name: f.name });
+};
+function itemEd(x) {
+  const T = x.kind === 'text';
+  let h = '<div class="card">';
+  if (T) h += `<div class="hrow"><h3>${ic('text')}Edit teks</h3></div><textarea data-k="text">${esc(x.text)}</textarea>
+    <div class="row"><div><label class="f">Warna</label><input type="color" data-k="color" value="${x.color}"></div><div><label class="f">Gaya</label><select data-k="style">${opt(STYLES, x.style)}</select></div></div>
+    <div data-show="bg" style="${x.style === 'bgColor' ? '' : 'display:none'}"><label class="f">Warna latar</label><input type="color" data-k="bg" value="${x.bg}"></div>
+    <div class="row"><div><label class="f">Font</label><select data-k="font">${opt(FONTS, x.font)}</select></div><div><label class="check" style="margin-top:28px"><input type="checkbox" data-k="bold" ${x.bold ? 'checked' : ''}> Tebal</label></div></div>`;
+  else h += `<div class="hrow"><h3>${ic(x.kind === 'emoji' ? 'smile' : 'image')}Edit ${x.kind === 'emoji' ? 'stiker ' + x.text : 'gambar'}</h3></div>`;
+  h += `<label class="f">Saiz <b data-sz>${Math.round(x.size)}</b></label><input type="range" min="${T ? 20 : 40}" max="${T ? 220 : 1400}" step="1" data-k="size" value="${x.size}">`;
+  if (x.kind === 'image') h += `<label class="f">Kelutsinaran</label><input type="range" min="0.1" max="1" step="0.05" data-k="opacity" value="${x.opacity}">`;
+  h += `<label class="f">Animasi</label><div class="chips">${chipsHtml(ANIMS, x.anim, 'anim')}</div>
+    <div class="row"><div><label class="f">Muncul (saat)</label><input type="number" step="0.1" min="0" data-k="start" value="${x.start}"></div><div><label class="f">Hilang (0 = habis)</label><input type="number" step="0.1" min="0" data-k="end" value="${x.end}"></div></div>
+    <div class="tools" style="margin-top:10px">${tool('startNow', 'inT', 'Muncul', '', 'a')}${tool('endNow', 'outT', 'Hilang', '', 'a')}${tool('center', 'center', 'Tengah', '', 'a')}${tool('front', 'layers', 'Depan', '', 'a')}${tool('dup', 'copy', 'Salin', '', 'a')}${tool('del', 'trash', 'Padam', 'red', 'a')}</div>
+    <p class="muted" style="margin:8px 0 0">"Muncul" / "Hilang" = set masa ikut garis putih pada timeline.</p></div>`;
+  return h;
+}
+const itemLabel = x => x.kind === 'text' ? (x.text.split('\n')[0] || '(kosong)') : x.kind === 'emoji' ? x.text + ' Stiker' : '🖼 Gambar';
+function renderItemsUI() {
+  const x = selItem();
+  $('#textChips').innerHTML = S.items.filter(q => q.kind === 'text').map(q => `<button class="chip ${q.id === S.sel ? 'on' : ''}" data-id="${q.id}">${esc(itemLabel(q))}</button>`).join('');
+  $('#stkChips').innerHTML = S.items.filter(q => q.kind !== 'text').map(q => `<button class="chip ${q.id === S.sel ? 'on' : ''}" data-id="${q.id}">${esc(itemLabel(q))}</button>`).join('');
+  $('#textEd').innerHTML = x && x.kind === 'text' ? itemEd(x) : '';
+  $('#stkEd').innerHTML = x && x.kind !== 'text' ? itemEd(x) : '';
+  $$('.bar.t,.bar.s').forEach(b => b.classList.toggle('on', +b.dataset.item === S.sel));
+}
+['#textChips', '#stkChips'].forEach(id => $(id).addEventListener('click', e => {
+  const b = e.target.closest('[data-id]'); if (!b) return;
+  S.sel = +b.dataset.id; renderItemsUI(); dirty = true;
+  const x = selItem(), end = x.end > 0 ? x.end : Infinity;
+  if (curT < x.start || curT >= end) { if (playing) pause(); seekTo(x.start); }
+}));
+['#textEd', '#stkEd'].forEach(id => {
+  const el = $(id);
+  el.addEventListener('focusin', () => pushUndo());
+  el.addEventListener('pointerdown', e => { if (e.target.dataset.k) pushUndo(); });
+  el.addEventListener('input', e => {
+    const k = e.target.dataset.k, x = selItem(); if (!k || !x) return;
+    const t = e.target;
+    x[k] = t.type === 'checkbox' ? t.checked : ['size', 'start', 'end', 'opacity'].includes(k) ? (parseFloat(t.value) || 0) : t.value;
+    if (k === 'size') el.querySelector('[data-sz]').textContent = Math.round(x.size);
+    if (k === 'style') {
+      el.querySelector('[data-show="bg"]').style.display = x.style === 'bgColor' ? '' : 'none';
+      if (x.style === 'bgLight' && x.color.toLowerCase() === '#ffffff') { x.color = '#111111'; el.querySelector('[data-k="color"]').value = '#111111'; }
+    }
+    if (k === 'text') { const c = document.querySelector(`.chip[data-id="${x.id}"]`); if (c) c.textContent = itemLabel(x); }
+    dirty = true;
+  });
+  el.addEventListener('change', e => { if (['text', 'start', 'end'].includes(e.target.dataset.k)) renderStrip(); });
+  el.addEventListener('click', e => {
+    const x = selItem(); if (!x) return;
+    const an = e.target.closest('[data-anim]');
+    if (an) {
+      pushUndo(true); x.anim = an.dataset.anim;
+      el.querySelectorAll('[data-anim]').forEach(b => b.classList.toggle('on', b === an));
+      if (x.anim !== 'none') previewFrom(x.start, 1500); else dirty = true;
+      return;
+    }
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    const i = S.items.indexOf(x), a = b.dataset.a;
+    pushUndo(true);
+    if (a === 'startNow') { x.start = r1(curT); if (x.end > 0 && x.end <= x.start) x.end = 0; toast('Muncul pada ' + fmt(x.start)); }
+    else if (a === 'endNow') { if (curT <= x.start) return toast('Masa hilang mesti selepas masa muncul'); x.end = r1(curT); toast('Hilang pada ' + fmt(x.end)); }
+    else if (a === 'center') { x.x = 0.5; x.y = 0.5; }
+    else if (a === 'front') { S.items.splice(i, 1); S.items.push(x); toast('Dibawa ke depan'); }
+    else if (a === 'dup') { const n = { ...x, id: uid++, y: clamp(x.y + 0.08, 0.02, 0.98), _box: null }; S.items.push(n); S.sel = n.id; }
+    else if (a === 'del') { S.items.splice(i, 1); S.sel = null; toast('Dipadam (tekan ↶ untuk undo)'); }
+    renderItemsUI(); renderStrip(); dirty = true;
+  });
+});
+
+/* ================= SUARA ================= */
+$('#loadDub').onclick = () => $('#fDub').click();
+$('#fDub').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) loadAudio(f, 'dub'); };
+$('#loadMusic').onclick = () => $('#fMusic').click();
+$('#fMusic').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) loadAudio(f, 'music'); };
+async function loadAudio(f, kind) {
+  ensureCtx(); busy('Memuatkan audio…');
+  try {
+    const buf = await actx.decodeAudioData(await f.arrayBuffer());
+    if (playing) pause();
+    if (kind === 'dub') { S.dub = { buffer: buf, name: f.name, offset: 0, fit: 'cut', vol: 1, fx: 'none' }; renderDub(); }
+    else { S.music = { buffer: buf, name: f.name.replace(/\.[^.]+$/, ''), vol: 0.3, loop: true, fade: true, skip: 0, credit: '' }; renderMusic(); }
+    applyVols(); renderStrip(); unbusy(); toast('Audio dimuatkan ✔');
+  } catch (err) { unbusy(); alert(L('Format audio tidak disokong. Cuba fail MP3, M4A atau WAV.','Audio format not supported. Try an MP3, M4A or WAV file.')); }
+}
+function countdown(n) {
+  return new Promise(res => {
+    const ov = $('#cdOv'), num = $('#cdNum'); ov.classList.add('on');
+    const step = () => { if (n <= 0) { ov.classList.remove('on'); res(); return; } num.textContent = n--; setTimeout(step, 800); };
+    step();
+  });
+}
+$('#recDub').onclick = async () => {
+  if (dubRec) return stopDubRec();
+  if (!S.clips.length) return toast('Tambah video dulu');
+  if (!window.MediaRecorder || !navigator.mediaDevices) return alert(L('Peranti ini tidak menyokong rakaman.','This device does not support recording.'));
+  if (S.dub && !confirm(L('Dubbing sedia ada akan diganti. Teruskan?','The existing dubbing will be replaced. Continue?'))) return;
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
+  catch (e) { return alert(L('Mikrofon tidak dapat dibuka. Sila benarkan akses mikrofon untuk ProEdit.','Could not open the microphone. Please allow microphone access for ProEdit.')); }
+  if (playing) pause();
+  ensureCtx(); try { await actx.resume(); } catch (e) {}
+  await seekTo(0);
+  await countdown(3);
+  const chunks = [], rec = new MediaRecorder(stream);
+  rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  rec.onstop = async () => {
+    stream.getTracks().forEach(t => t.stop());
+    dubRec = null; applyVols(); updDubBtn(); setPlayBtn();
+    if (!chunks.length) return;
+    busy('Memproses rakaman…');
+    try {
+      const blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
+      const buf = await actx.decodeAudioData(await blob.arrayBuffer());
+      S.dub = { buffer: buf, name: 'Rakaman suara', offset: 0, fit: 'cut', vol: 1, fx: 'none' };
+      unbusy(); renderDub(); renderStrip(); toast('Dubbing siap ✔ Tekan ▶ untuk dengar');
+    } catch (e) { unbusy(); alert(L('Gagal proses rakaman: ','Could not process recording: ') + e.message); }
+  };
+  dubRec = { rec, stream };
+  applyVols(); updDubBtn(); setPlayBtn();
+  onFinish = () => { if (dubRec && dubRec.rec.state !== 'inactive') dubRec.rec.stop(); };
+  rec.start();
+  await play(0);
+};
+function stopDubRec() { onFinish = null; pause(); if (dubRec && dubRec.rec.state !== 'inactive') dubRec.rec.stop(); }
+function updDubBtn() { $('#recDub').innerHTML = dubRec ? ic('stop') + 'Berhenti' : ic('mic') + 'Rakam'; }
+function renderDubInfoOnly() {
+  $('#dubVidLen').textContent = 'Video ' + total().toFixed(1) + 's';
+  const fi = $('#dubFitInfo'); if (fi && S.dub) dubFitText(fi);
+}
+function dubFitText(fi) {
+  const d = S.dub, T = total(), r = dubRate();
+  if (d.fit === 'stretch') fi.innerHTML = `Kelajuan suara: <b>${r.toFixed(2)}x</b>` + ((r < 0.85 || r > 1.2) ? ' ⚠ beza besar, suara mungkin berbunyi pelik' : ' ✔ muat tepat');
+  else fi.textContent = d.offset + d.buffer.duration / r > T + 0.05 ? 'Hujung dubbing akan dipotong bila video tamat.' : 'Dubbing muat dalam video.';
+}
+function renderDub() {
+  renderDubInfoOnly();
+  const d = S.dub, el = $('#dubInfo');
+  if (!d) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:10px">
+    <div class="t1">🎤 ${esc(d.name)} <span class="muted">· ${d.buffer.duration.toFixed(1)}s</span></div>
+    <label class="f">Padankan dengan video</label>
+    <div class="chips">${chipsHtml([['cut', 'Ikut asal'], ['stretch', 'Muat tepat tempoh video']], d.fit, 'dfit')}</div>
+    <div class="muted" id="dubFitInfo"></div>
+    <label class="f">Efek suara</label>
+    <div class="chips">${chipsHtml(FX, d.fx, 'dfx')}</div>
+    <div class="row"><div><label class="f">Mula saat ke-</label><input type="number" id="dubOff" step="0.1" min="0" value="${d.offset}"></div>
+      <div><label class="f">Volume <b id="dubVolV">${Math.round(d.vol * 100)}%</b></label><input type="range" id="dubVol" min="0" max="2" step="0.05" value="${d.vol}"></div></div>
+    <div class="row" style="margin-top:12px"><button class="btn soft" id="dubPlay">${ic('play')}Dengar</button><button class="btn redt" id="dubDel">${ic('trash')}Buang</button></div></div>`;
+  dubFitText($('#dubFitInfo'));
+  el.onclick = e => {
+    const f = e.target.closest('[data-dfit]'), x = e.target.closest('[data-dfx]');
+    if (f) { d.fit = f.dataset.dfit; if (playing) pause(); renderDub(); renderStrip(); }
+    else if (x) {
+      d.fx = x.dataset.dfx; if (playing) pause(); renderDub(); renderStrip();
+      if (d.fit === 'stretch' && (d.fx === 'chipmunk' || d.fx === 'garau')) toast('Untuk Chipmunk/Garau, pilih "Ikut asal"');
+      else previewFrom(d.offset, 2500);
+    }
+  };
+  $('#dubOff').oninput = e => { d.offset = Math.max(0, parseFloat(e.target.value) || 0); dubFitText($('#dubFitInfo')); if (playing) pause(); };
+  $('#dubOff').onchange = () => renderStrip();
+  $('#dubVol').oninput = e => { d.vol = parseFloat(e.target.value); $('#dubVolV').textContent = Math.round(d.vol * 100) + '%'; applyVols(); };
+  $('#dubPlay').onclick = () => play(0);
+  $('#dubDel').onclick = () => { if (!confirm(L('Buang dubbing?','Remove dubbing?'))) return; if (playing) pause(); S.dub = null; renderDub(); renderStrip(); };
+}
+$('#origVol').oninput = e => { S.origVol = parseFloat(e.target.value); $('#origVolV').textContent = Math.round(S.origVol * 100) + '%'; applyVols(); };
+function renderMusic() {
+  const m = S.music, el = $('#musicInfo');
+  renderTrkGrid();
+  if (!m) { el.innerHTML = ''; return; }
+  const dur = m.buffer.duration;
+  el.innerHTML = `<div style="border-top:1px solid var(--line);margin-top:10px;padding-top:10px" class="t1 ell">🎵 ${esc(m.name)} <span class="muted">· ${dur.toFixed(1)}s</span></div>
+    ${m.credit ? `<div class="credit"><b>Kredit (letak dalam caption TikTok):</b><br><span>${esc(m.credit)}</span><br><button class="btn sm2 soft" id="musCred" style="margin-top:6px">${ic('copy')}Salin kredit</button></div>` : ''}
+    <label class="f">Volume muzik <b id="musVolV">${Math.round(m.vol * 100)}%</b></label>
+    <input type="range" id="musVol" min="0" max="1.5" step="0.05" value="${m.vol}">
+    <label class="f">Mula lagu dari <b id="musSkipV">${m.skip.toFixed(1)}s</b></label>
+    <input type="range" id="musSkip" min="0" max="${Math.max(0, dur - 1).toFixed(1)}" step="0.5" value="${m.skip}">
+    <label class="check"><input type="checkbox" id="musLoop" ${m.loop ? 'checked' : ''}> Ulang jika lagu lebih pendek</label>
+    <label class="check"><input type="checkbox" id="musFade" ${m.fade ? 'checked' : ''}> Fade masuk & keluar</label>
+    <div class="row"><button class="btn soft" id="musPlay">${ic('play')}Dengar</button><button class="btn redt" id="musDel">${ic('trash')}Buang</button></div>`;
+  $('#musVol').oninput = e => { m.vol = parseFloat(e.target.value); $('#musVolV').textContent = Math.round(m.vol * 100) + '%'; if (playing) musicGain.gain.value = m.vol; else applyVols(); };
+  $('#musSkip').oninput = e => { m.skip = parseFloat(e.target.value); $('#musSkipV').textContent = m.skip.toFixed(1) + 's'; if (playing) pause(); };
+  $('#musLoop').onchange = e => { m.loop = e.target.checked; if (playing) pause(); };
+  $('#musFade').onchange = e => { m.fade = e.target.checked; if (playing) pause(); };
+  $('#musPlay').onclick = () => play(0);
+  $('#musDel').onclick = () => { if (playing) pause(); S.music = null; renderMusic(); renderStrip(); };
+  if (m.credit) $('#musCred').onclick = () => copyText(m.credit);
+}
+
+
+/* ================= MUZIK & KESAN BUNYI DIJANA (bebas hak cipta) ================= */
+const mtof = n => 440 * Math.pow(2, (n - 69) / 12);
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function mkSynth(ctx, out) {
+  const nb = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate), d = nb.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const env = (gp, t, a, peak, dec, sus, rel, dur) => {
+    gp.setValueAtTime(0.0001, t); gp.linearRampToValueAtTime(peak, t + a);
+    if (sus != null) { gp.setTargetAtTime(peak * sus, t + a, dec / 3); gp.setValueAtTime(peak * sus, t + dur); gp.exponentialRampToValueAtTime(0.0001, t + dur + rel); }
+    else gp.exponentialRampToValueAtTime(0.0001, t + a + dec);
+  };
+  const dst = (node, pan) => { if (pan) { const p = ctx.createStereoPanner(); p.pan.value = pan; node.connect(p); p.connect(out); } else node.connect(out); };
+  const S = {
+    ctx, out,
+    tone(t, n, dur, o = {}) {
+      const type = o.type || 'triangle', vol = o.vol || 0.1, f = mtof(n);
+      const g = ctx.createGain(); let last = g;
+      if (o.cut) { const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = o.cut; lp.Q.value = o.q || 0.7; g.connect(lp); last = lp; }
+      dst(last, o.pan);
+      const dets = o.det ? [-o.det, o.det] : [0];
+      dets.forEach(dt => { const os = ctx.createOscillator(); os.type = type; os.frequency.value = f; os.detune.value = dt; os.connect(g); os.start(t); os.stop(t + dur + (o.rel || 0.3) + 0.05); });
+      if (o.pluck) env(g.gain, t, o.a || 0.004, vol, o.dec || 0.4);
+      else env(g.gain, t, o.a || 0.01, vol, o.dec || 0.1, o.sus == null ? 0.8 : o.sus, o.rel || 0.3, dur);
+    },
+    bell(t, n, o = {}) { const v = o.vol || 0.08; S.tone(t, n, 0, { type: 'sine', pluck: 1, vol: v, dec: o.dec || 1.2, pan: o.pan }); S.tone(t, n + (o.ratio || 12), 0, { type: 'sine', pluck: 1, vol: v * 0.35, dec: (o.dec || 1.2) * 0.5, pan: o.pan }); },
+    noise(t, dur, o = {}) {
+      const src = ctx.createBufferSource(); src.buffer = nb; src.loop = true;
+      const f = ctx.createBiquadFilter(); f.type = o.ft || 'highpass'; f.frequency.value = o.freq || 6000; f.Q.value = o.q || 0.8;
+      const g = ctx.createGain(); src.connect(f); f.connect(g); dst(g, o.pan);
+      env(g.gain, t, o.a || 0.002, o.vol || 0.1, dur);
+      src.start(t, Math.random() * 0.5); src.stop(t + dur + 0.1);
+      return f;
+    },
+    kick(t, v = 0.9) { const os = ctx.createOscillator(), g = ctx.createGain(); os.type = 'sine'; os.frequency.setValueAtTime(150, t); os.frequency.exponentialRampToValueAtTime(42, t + 0.13); os.connect(g); g.connect(out); env(g.gain, t, 0.002, v, 0.38); os.start(t); os.stop(t + 0.5); },
+    snare(t, v = 0.35) { S.noise(t, 0.18, { ft: 'bandpass', freq: 1900, q: 0.7, vol: v }); S.tone(t, 55, 0, { type: 'triangle', pluck: 1, vol: v * 0.5, dec: 0.1 }); },
+    clap(t, v = 0.35) { [0, 0.011, 0.023].forEach((o, i) => S.noise(t + o, i === 2 ? 0.16 : 0.03, { ft: 'bandpass', freq: 1300, q: 1.1, vol: v })); },
+    hat(t, v = 0.08, open, pan) { S.noise(t, open ? 0.22 : 0.045, { ft: 'highpass', freq: 7500, vol: v, pan: pan || 0.15 }); },
+    tom(t, n, v = 0.5) { const os = ctx.createOscillator(), g = ctx.createGain(); os.type = 'sine'; os.frequency.setValueAtTime(mtof(n) * 1.6, t); os.frequency.exponentialRampToValueAtTime(mtof(n), t + 0.12); os.connect(g); g.connect(out); env(g.gain, t, 0.003, v, 0.5); os.start(t); os.stop(t + 0.6); },
+    crash(t, v = 0.12) { S.noise(t, 1.6, { ft: 'highpass', freq: 5000, vol: v }); }
+  };
+  return S;
+};
+const CH = { M: [0, 4, 7], m: [0, 3, 7], M7: [0, 4, 7, 11], m7: [0, 3, 7, 10], '7': [0, 4, 7, 10], s4: [0, 5, 7] };
+const chord = (r, q) => CH[q].map(i => r + i);
+const PENTA = [0, 2, 4, 7, 9];
+const TRACKS = [
+  { id: 'ceria', em: '🎉', n: 'Ceria', bpm: 118, prog: [[60, 'M'], [55, 'M'], [57, 'm'], [53, 'M']], b(S, B, t0, c, bar, R) {
+      for (let i = 0; i < 4; i++) { S.kick(t0 + i * B, 0.8); S.hat(t0 + (i + 0.5) * B, 0.09, i === 3); }
+      S.clap(t0 + B, 0.3); S.clap(t0 + 3 * B, 0.3);
+      for (let i = 0; i < 8; i++) S.tone(t0 + i * B / 2, c[0] - 24, B / 2.4, { type: 'sawtooth', cut: 700, vol: 0.12, pluck: 1, dec: 0.22 });
+      const ar = [0, 1, 2, 1, 0, 2, 1, 2];
+      for (let i = 0; i < 8; i++) S.tone(t0 + i * B / 2, c[ar[i]] + 12, 0, { type: 'square', cut: 2600, vol: 0.035, pluck: 1, dec: 0.25, pan: i % 2 ? 0.3 : -0.3 });
+      c.forEach(n => S.tone(t0, n, 4 * B - 0.1, { type: 'sawtooth', det: 8, cut: 1400, vol: 0.022, a: 0.15, rel: 0.2 }));
+  } },
+  { id: 'lofi', em: '☕', n: 'Lo-fi', bpm: 78, prog: [[50, 'm7'], [55, '7'], [48, 'M7'], [45, 'm7']], b(S, B, t0, c, bar, R) {
+      S.kick(t0, 0.7); S.kick(t0 + 2.5 * B, 0.6); S.snare(t0 + B, 0.18); S.snare(t0 + 3 * B, 0.18);
+      for (let i = 0; i < 8; i++) S.hat(t0 + (Math.floor(i / 2) + (i % 2 ? 0.62 : 0)) * B, i % 2 ? 0.035 : 0.05);
+      [0, 1.5].forEach(o => c.forEach((n, j) => S.tone(t0 + o * B + j * 0.012, n + 12, B * 1.2, { type: 'triangle', cut: 1500, vol: 0.05, a: 0.01, sus: 0.4, rel: 0.6 })));
+      S.tone(t0, c[0] - 12, B * 1.8, { type: 'sine', vol: 0.2, sus: 0.6 }); S.tone(t0 + 2.5 * B, c[0] - 12, B, { type: 'sine', vol: 0.16, sus: 0.6 });
+      S.noise(t0, 4 * B, { ft: 'bandpass', freq: 3200, q: 0.5, vol: 0.008, a: 0.05 });
+      if (R() > 0.4) S.tone(t0 + 3 * B, c[2] + 24, B / 2, { type: 'sine', vol: 0.04, pluck: 1, dec: 0.8 });
+  } },
+  { id: 'santai', em: '🌿', n: 'Santai', bpm: 90, prog: [[53, 'M7'], [52, 'm7'], [50, 'm7'], [48, 'M7']], b(S, B, t0, c, bar, R) {
+      c.forEach(n => S.tone(t0, n, 4 * B - 0.05, { type: 'sawtooth', det: 10, cut: 900, vol: 0.02, a: 0.6, rel: 0.6 }));
+      const ar = [0, 1, 2, 3, 2, 1, 2, 3];
+      for (let i = 0; i < 8; i++) S.bell(t0 + i * B / 2, c[ar[i]] + 12, { vol: 0.045, dec: 0.9, pan: i % 2 ? 0.35 : -0.35 });
+      S.kick(t0, 0.5); S.kick(t0 + 2 * B, 0.45);
+      for (let i = 0; i < 16; i++) S.hat(t0 + i * B / 4, i % 4 === 2 ? 0.03 : 0.015);
+      S.tone(t0, c[0] - 12, 4 * B - 0.1, { type: 'sine', vol: 0.13, a: 0.05 });
+  } },
+  { id: 'epik', em: '⚔️', n: 'Epik', bpm: 96, prog: [[57, 'm'], [53, 'M'], [48, 'M'], [55, 'M']], b(S, B, t0, c, bar, R) {
+      c.forEach(n => { S.tone(t0, n, 4 * B, { type: 'sawtooth', det: 12, cut: 1800, vol: 0.025, a: 0.3, rel: 0.3 }); S.tone(t0, n + 12, 4 * B, { type: 'sawtooth', det: 6, cut: 2200, vol: 0.012, a: 0.4, rel: 0.3 }); });
+      S.tone(t0, c[0] - 24, 4 * B, { type: 'sawtooth', cut: 300, vol: 0.12, a: 0.05 });
+      for (let i = 0; i < 8; i++) S.tone(t0 + i * B / 2, (i % 2 ? c[2] : c[0]) - 12, 0, { type: 'sawtooth', cut: 1200, vol: 0.05, pluck: 1, dec: 0.15 });
+      S.kick(t0, 1); S.kick(t0 + 2 * B, 0.9); [0, 1.5, 2, 3, 3.5].forEach((o, i) => S.tom(t0 + o * B, i % 2 ? 43 : 38, 0.45));
+      S.snare(t0 + B, 0.3); S.snare(t0 + 3 * B, 0.35);
+      if (bar % 4 === 0) S.crash(t0, 0.1);
+  } },
+  { id: 'comel', em: '🧸', n: 'Comel', bpm: 128, prog: [[60, 'M'], [53, 'M'], [55, 'M'], [60, 'M']], b(S, B, t0, c, bar, R) {
+      S.kick(t0, 0.6); S.kick(t0 + 2 * B, 0.6); S.clap(t0 + B, 0.25); S.clap(t0 + 3 * B, 0.25);
+      for (let i = 0; i < 4; i++) S.hat(t0 + (i + 0.5) * B, 0.05);
+      [0, 1, 2, 3].forEach(i => S.tone(t0 + i * B, c[0] - 12 + (i % 2 ? 12 : 0), B * 0.4, { type: 'triangle', vol: 0.14, pluck: 1, dec: 0.2 }));
+      for (let i = 0; i < 8; i++) if (R() > 0.25) { const n = 72 + PENTA[Math.floor(R() * 5)] + (R() > 0.7 ? 12 : 0); S.bell(t0 + i * B / 2, n, { vol: 0.05, dec: 0.5, ratio: 19 }); }
+  } },
+  { id: 'korporat', em: '💼', n: 'Korporat', bpm: 112, prog: [[60, 'M'], [57, 'm'], [53, 'M'], [55, 's4']], b(S, B, t0, c, bar, R) {
+      for (let i = 0; i < 4; i++) { S.kick(t0 + i * B, 0.55); }
+      for (let i = 0; i < 8; i++) S.hat(t0 + i * B / 2, i % 2 ? 0.06 : 0.03);
+      S.clap(t0 + B, 0.2); S.clap(t0 + 3 * B, 0.2);
+      const ar = [0, 2, 1, 2, 0, 2, 1, 2];
+      for (let i = 0; i < 8; i++) { S.tone(t0 + i * B / 2, c[ar[i]] + 12, 0, { type: 'triangle', vol: 0.07, pluck: 1, dec: 0.5, cut: 3000 }); S.tone(t0 + i * B / 2, c[ar[i]] + 24, 0, { type: 'sine', vol: 0.02, pluck: 1, dec: 0.3 }); }
+      for (let i = 0; i < 8; i++) S.tone(t0 + i * B / 2, c[0] - 24, B / 3, { type: 'sine', vol: 0.16, pluck: 1, dec: 0.25 });
+      c.forEach(n => S.tone(t0, n, 4 * B - 0.1, { type: 'sawtooth', det: 7, cut: 1000, vol: 0.015, a: 0.3 }));
+  } },
+  { id: 'tropika', em: '🌴', n: 'Tropika', bpm: 100, prog: [[57, 'm'], [53, 'M'], [48, 'M'], [55, 'M']], b(S, B, t0, c, bar, R) {
+      S.kick(t0, 0.75); S.kick(t0 + 2 * B, 0.75); [0.75, 1.5, 2.75, 3.5].forEach(o => S.snare(t0 + o * B, 0.17));
+      for (let i = 0; i < 8; i++) S.hat(t0 + i * B / 2, 0.04, false, i % 2 ? 0.4 : -0.4);
+      [0.5, 1.5, 2.5, 3.5].forEach(o => c.forEach(n => S.tone(t0 + o * B, n + 12, 0, { type: 'sine', vol: 0.05, pluck: 1, dec: 0.25 })));
+      const mel = [2, 1, 0, 1, 2, 2, 1, 0];
+      for (let i = 0; i < 8; i++) if (i !== 3 && i !== 7) S.bell(t0 + i * B / 2, c[mel[i]] + 24, { vol: 0.05, dec: 0.35, ratio: 12 });
+      S.tone(t0, c[0] - 12, B * 1.4, { type: 'sine', vol: 0.18, pluck: 1, dec: 0.6 }); S.tone(t0 + 2 * B, c[0] - 12, B * 1.4, { type: 'sine', vol: 0.18, pluck: 1, dec: 0.6 });
+  } },
+  { id: 'suspens', em: '🕵️', n: 'Suspens', bpm: 72, prog: [[57, 'm'], [57, 'm'], [53, 'M'], [52, 'M']], b(S, B, t0, c, bar, R) {
+      S.tone(t0, c[0] - 24, 4 * B, { type: 'sawtooth', cut: 380, vol: 0.14, a: 0.4, rel: 0.3 });
+      c.forEach(n => S.tone(t0, n + 12, 4 * B, { type: 'sawtooth', det: 14, cut: 1200, vol: 0.012, a: 1.2, rel: 0.5 }));
+      for (let i = 0; i < 8; i++) S.noise(t0 + i * B / 2, 0.02, { ft: 'highpass', freq: 9000, vol: i % 2 ? 0.04 : 0.07 });
+      S.kick(t0, 0.75); S.kick(t0 + 0.28 * B, 0.55); S.kick(t0 + 2 * B, 0.75); S.kick(t0 + 2.28 * B, 0.55);
+      if (bar % 2 === 1) S.tone(t0 + 3 * B, c[1] + 24, B, { type: 'sine', vol: 0.03, a: 0.3, rel: 0.6 });
+  } },
+  { id: 'retro', em: '👾', n: 'Retro 8-bit', bpm: 140, prog: [[60, 'M'], [57, 'm'], [53, 'M'], [55, 'M']], b(S, B, t0, c, bar, R) {
+      for (let i = 0; i < 8; i++) S.tone(t0 + i * B / 2, c[0] - 12 + (i % 2 ? 12 : 0), B / 2.5, { type: 'square', vol: 0.05, sus: 0.7, rel: 0.02 });
+      for (let i = 0; i < 8; i++) { const n = c[Math.floor(R() * 3)] + 12 + (R() > 0.6 ? 12 : 0); if (R() > 0.2) S.tone(t0 + i * B / 2, n, B / 2.3, { type: 'square', vol: 0.035, sus: 0.8, rel: 0.02, cut: 4000 }); }
+      for (let i = 0; i < 4; i++) { S.noise(t0 + i * B, 0.06, { ft: 'lowpass', freq: 400, vol: 0.4 }); S.hat(t0 + (i + 0.5) * B, 0.05); }
+      S.noise(t0 + B, 0.12, { ft: 'bandpass', freq: 2000, vol: 0.2 }); S.noise(t0 + 3 * B, 0.12, { ft: 'bandpass', freq: 2000, vol: 0.2 });
+  } },
+  { id: 'tradisional', em: '🪘', n: 'Tradisional', bpm: 96, prog: [[60, 'M'], [62, 's4'], [60, 'M'], [55, 'M']], b(S, B, t0, c, bar, R) {
+      if (bar % 2 === 0) { S.tone(t0, 36, 3.8 * B, { type: 'sine', vol: 0.22, a: 0.01, sus: 0.3, dec: 0.6, rel: 1 }); S.tone(t0, 43.2, 2 * B, { type: 'sine', vol: 0.06, a: 0.01, sus: 0.2, dec: 0.5, rel: 0.8 }); }
+      const seq = [0, 2, 4, 2, 3, 2, 1, 0];
+      for (let i = 0; i < 8; i++) S.bell(t0 + i * B / 2, 72 + PENTA[(seq[i] + bar) % 5], { vol: 0.055, dec: 0.7, ratio: 17.6, pan: -0.25 });
+      for (let i = 0; i < 4; i++) S.bell(t0 + i * B + B / 4, 60 + PENTA[(i * 2 + bar) % 5], { vol: 0.04, dec: 1, ratio: 17.6, pan: 0.25 });
+      [0, 0.75, 1.5, 2, 2.75, 3.5].forEach((o, i) => S.tom(t0 + o * B, i % 3 === 0 ? 45 : 52, i % 3 === 0 ? 0.4 : 0.22));
+  } }
+];
+const SFX = [
+  { id: 'whoosh', em: '💨', n: 'Whoosh', len: 0.9, b(S) { const f = S.noise(0, 0.75, { ft: 'bandpass', freq: 300, q: 1.2, vol: 0.6, a: 0.25 }); f.frequency.setValueAtTime(300, 0); f.frequency.exponentialRampToValueAtTime(3200, 0.35); f.frequency.exponentialRampToValueAtTime(500, 0.8); } },
+  { id: 'ding', em: '🔔', n: 'Ding', len: 1.6, b(S) { S.bell(0, 88, { vol: 0.35, dec: 1.4, ratio: 12 }); S.bell(0, 95, { vol: 0.1, dec: 1, ratio: 12 }); } },
+  { id: 'pop', em: '🫧', n: 'Pop', len: 0.25, b(S) { const c = S.ctx, o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(700, 0); o.frequency.exponentialRampToValueAtTime(140, 0.09); o.connect(g); g.connect(S.out); g.gain.setValueAtTime(0.6, 0); g.gain.exponentialRampToValueAtTime(0.001, 0.12); o.start(0); o.stop(0.2); } },
+  { id: 'tepuk', em: '👏', n: 'Tepukan', len: 2.8, b(S) { const R = rng(7); for (let i = 0; i < 140; i++) { const t = R() * 2.4, env = Math.sin(Math.PI * t / 2.4); S.noise(t, 0.03 + R() * 0.03, { ft: 'bandpass', freq: 900 + R() * 1400, q: 1.2, vol: 0.12 * env + 0.02, pan: R() * 1.6 - 0.8 }); } } },
+  { id: 'tada', em: '🎺', n: 'Ta-da', len: 1.8, b(S) { [60, 64, 67].forEach(n => S.tone(0, n, 0.12, { type: 'sawtooth', det: 8, cut: 2500, vol: 0.08, rel: 0.05 })); [60, 64, 67, 72].forEach(n => S.tone(0.18, n, 1.0, { type: 'sawtooth', det: 8, cut: 2500, vol: 0.08, rel: 0.5 })); S.crash(0.18, 0.12); } },
+  { id: 'boing', em: '🤸', n: 'Boing', len: 0.8, b(S) { const c = S.ctx, o = c.createOscillator(), l = c.createOscillator(), lg = c.createGain(), g = c.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(180, 0); o.frequency.exponentialRampToValueAtTime(420, 0.6); l.frequency.value = 14; lg.gain.value = 40; l.connect(lg); lg.connect(o.frequency); o.connect(g); g.connect(S.out); g.gain.setValueAtTime(0.5, 0); g.gain.exponentialRampToValueAtTime(0.001, 0.7); o.start(0); l.start(0); o.stop(0.75); l.stop(0.75); } },
+  { id: 'kaching', em: '💰', n: 'Kaching', len: 1.4, b(S) { S.noise(0, 0.06, { ft: 'highpass', freq: 3000, vol: 0.3 }); S.bell(0.05, 96, { vol: 0.25, dec: 0.9, ratio: 7 }); S.bell(0.16, 100, { vol: 0.25, dec: 1.1, ratio: 7 }); } },
+  { id: 'betul', em: '✅', n: 'Betul', len: 1.2, b(S) { S.bell(0, 81, { vol: 0.3, dec: 0.5 }); S.bell(0.13, 88, { vol: 0.3, dec: 0.9 }); } },
+  { id: 'salah', em: '❌', n: 'Salah', len: 0.8, b(S) { [0, 0.28].forEach(t => S.tone(t, 40, 0.2, { type: 'sawtooth', cut: 900, vol: 0.18, rel: 0.04 })); } },
+  { id: 'boom', em: '💥', n: 'Boom', len: 1.8, b(S) { const c = S.ctx, o = c.createOscillator(), g = c.createGain(); o.frequency.setValueAtTime(110, 0); o.frequency.exponentialRampToValueAtTime(30, 1.2); o.connect(g); g.connect(S.out); g.gain.setValueAtTime(1, 0); g.gain.exponentialRampToValueAtTime(0.001, 1.6); o.start(0); o.stop(1.7); S.noise(0, 0.6, { ft: 'lowpass', freq: 600, vol: 0.5 }); } },
+  { id: 'drumroll', em: '🥁', n: 'Drum roll', len: 3, b(S) { let t = 0, gap = 0.09; while (t < 1.5) { S.snare(t, 0.08 + t * 0.12); t += gap; gap = Math.max(0.035, gap * 0.95); } S.kick(1.55, 1); S.crash(1.55, 0.25); } },
+  { id: 'klik', em: '🖱️', n: 'Klik', len: 0.15, b(S) { S.noise(0, 0.02, { ft: 'bandpass', freq: 3500, q: 2, vol: 0.6 }); } },
+  { id: 'naik', em: '🚀', n: 'Naik', len: 1.6, b(S) { const f = S.noise(0, 1.4, { ft: 'bandpass', freq: 400, q: 2, vol: 0.35, a: 1.2 }); f.frequency.setValueAtTime(400, 0); f.frequency.exponentialRampToValueAtTime(6000, 1.35); const c = S.ctx, o = c.createOscillator(), g = c.createGain(); o.type = 'sawtooth'; o.frequency.setValueAtTime(110, 0); o.frequency.exponentialRampToValueAtTime(880, 1.35); o.connect(g); g.connect(S.out); g.gain.setValueAtTime(0.001, 0); g.gain.exponentialRampToValueAtTime(0.06, 1.3); g.gain.exponentialRampToValueAtTime(0.001, 1.45); o.start(0); o.stop(1.5); } },
+  { id: 'gong', em: '🛕', n: 'Gong', len: 4, b(S) { [[36, 0.35], [43.1, 0.12], [48.3, 0.08], [55.6, 0.05]].forEach(([n, v]) => S.tone(0, n, 0, { type: 'sine', pluck: 1, vol: v, dec: 3.6 })); } },
+  { id: 'ketawa', em: '😆', n: 'Ketawa', len: 1.6, b(S) { for (let i = 0; i < 6; i++) { const t = i * 0.19, c = S.ctx, o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter(); o.type = 'sawtooth'; o.frequency.setValueAtTime(320 - i * 15, t); o.frequency.exponentialRampToValueAtTime(230 - i * 12, t + 0.12); f.type = 'bandpass'; f.frequency.value = 900; f.Q.value = 2; o.connect(f); f.connect(g); g.connect(S.out); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.35, t + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t + 0.14); o.start(t); o.stop(t + 0.16); } } }
+];
+const genCache = {};
+async function renderTrack(T) {
+  const sr = 44100, B = 60 / T.bpm, bars = 8, len = bars * 4 * B;
+  const ctx = new OfflineAudioContext(2, Math.ceil(len * sr), sr);
+  const out = ctx.createGain(); out.gain.value = 0.9;
+  const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4;
+  out.connect(comp); comp.connect(ctx.destination);
+  const Sy = mkSynth(ctx, out), R = rng(T.id.length * 97 + T.bpm);
+  for (let bar = 0; bar < bars; bar++) { const [r, q] = T.prog[bar % T.prog.length]; T.b(Sy, B, bar * 4 * B, chord(r, q), bar, R); }
+  return ctx.startRendering();
+}
+async function renderFx(F) {
+  const sr = 44100, ctx = new OfflineAudioContext(2, Math.ceil(F.len * sr), sr);
+  const out = ctx.createGain(); out.connect(ctx.destination);
+  F.b(mkSynth(ctx, out));
+  return ctx.startRendering();
+}
+function normalize(buf, target) {
+  let m = 0; for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = 0; i < d.length; i++) { const v = Math.abs(d[i]); if (v > m) m = v; } }
+  if (m > 0) { const k = target / m; for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = 0; i < d.length; i++) d[i] *= k; } }
+  return buf;
+}
+async function getGen(kind, id) {
+  const key = kind + id; if (genCache[key]) return genCache[key];
+  const list = kind === 't' ? TRACKS : SFX, def = list.find(x => x.id === id);
+  busy(kind === 't' ? L('Menjana muzik…', 'Generating music…') : L('Sila tunggu…', 'Please wait…'));
+  try { return genCache[key] = normalize(await (kind === 't' ? renderTrack(def) : renderFx(def)), kind === 't' ? 0.8 : 0.9); } finally { unbusy(); }
+}
+function renderTrkGrid() {
+  const cur = S.music && S.music.preset;
+  $('#trkGrid').innerHTML = TRACKS.map(t => `<button data-trk="${t.id}" class="${cur === t.id ? 'on' : ''}"><span class="em">${t.em}</span><span>${t.n}</span></button>`).join('');
+}
+$('#trkGrid').onclick = async e => {
+  const b = e.target.closest('[data-trk]'); if (!b) return;
+  const T = TRACKS.find(x => x.id === b.dataset.trk);
+  ensureCtx(); try { await actx.resume(); } catch (er) {}
+  const buf = await getGen('t', T.id);
+  if (playing) pause();
+  S.music = { buffer: buf, name: 'ProEdit · ' + tr(T.n), preset: T.id, vol: 0.35, loop: true, fade: true, skip: 0, credit: '' };
+  renderMusic(); renderStrip(); renderExport(); toast(L('Muzik dipilih ✔', 'Music selected ✔'));
+  if (S.clips.length) previewFrom(curT >= total() - 0.5 ? 0 : curT, 5000); else previewBuf(buf, 0, 6);
+};
+$('#sfxGrid').innerHTML = SFX.map(f => `<button data-sfxg="${f.id}"><span class="em">${f.em}</span><span>${f.n}</span></button>`).join('');
+$('#sfxGrid').onclick = async e => {
+  const b = e.target.closest('[data-sfxg]'); if (!b) return;
+  const F = SFX.find(x => x.id === b.dataset.sfxg);
+  ensureCtx(); try { await actx.resume(); } catch (er) {}
+  const buf = await getGen('s', F.id);
+  previewBuf(buf, 0);
+  if (S.clips.length) addSfx(buf, tr(F.n)); else toast(L('Tambah video dulu', 'Add a video first'));
+};
+let selSfx = null;
+function addSfx(buf, name) {
+  pushUndo(true);
+  const x = { id: uid++, buffer: buf, name, start: r1(Math.min(curT, Math.max(0, total() - 0.1))), vol: 1 };
+  S.sfx.push(x); selSfx = x.id; renderSfx(); renderStrip(); renderExport(); toast(L('Kesan bunyi ditambah ✔', 'Sound effect added ✔'));
+}
+function renderSfx() {
+  $('#sfxChips').innerHTML = S.sfx.map(x => `<button class="chip ${x.id === selSfx ? 'on' : ''}" data-sfxc="${x.id}">🔔 ${esc(x.name)} · ${fmt(x.start)}</button>`).join('');
+  const x = S.sfx.find(q => q.id === selSfx), el = $('#sfxEd');
+  if (!x) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="ovbox"><div class="t1">🔔 <span>${esc(x.name)}</span> <span class="muted">· ${fmt(x.start)}</span></div>
+    <label class="f">Volume <b id="sfxVolV">${Math.round(x.vol * 100)}%</b></label><input type="range" id="sfxVol" min="0" max="2" step="0.05" value="${x.vol}">
+    <div class="row" style="margin-top:8px"><button class="btn sm2" data-sx="move">${ic('move')}Alih ke sini</button><button class="btn sm2 soft" data-sx="play">${ic('play')}Dengar</button><button class="btn sm2 redt" data-sx="del">${ic('trash')}Padam</button></div></div>`;
+  $('#sfxVol').oninput = ev => { x.vol = parseFloat(ev.target.value); $('#sfxVolV').textContent = Math.round(x.vol * 100) + '%'; };
+}
+$('#sfxChips').onclick = e => { const b = e.target.closest('[data-sfxc]'); if (!b) return; selSfx = +b.dataset.sfxc; const x = S.sfx.find(q => q.id === selSfx); renderSfx(); renderStrip(); if (playing) pause(); seekTo(x.start); };
+$('#sfxEd').onclick = e => {
+  const b = e.target.closest('[data-sx]'); if (!b) return;
+  const i = S.sfx.findIndex(q => q.id === selSfx); if (i < 0) return; const x = S.sfx[i];
+  if (b.dataset.sx === 'play') { if (S.clips.length) previewFrom(Math.max(0, x.start - 0.5), (x.buffer.duration + 1) * 1000); else previewBuf(x.buffer, 0); return; }
+  pushUndo(true);
+  if (b.dataset.sx === 'move') x.start = r1(curT);
+  else { S.sfx.splice(i, 1); selSfx = null; toast(L('Dipadam (tekan ↶ untuk undo)', 'Deleted (tap ↶ to undo)')); }
+  renderSfx(); renderStrip(); renderExport();
+};
+
+/* ================= PRATONTON ================= */
+const pvAudio = new Audio(); pvAudio.preload = 'none';
+let pvSrc = null;
+function stopPreview() {
+  try { pvSrc && pvSrc.stop(); } catch (e) {} pvSrc = null;
+  try { pvAudio.pause(); } catch (e) {}
+  $$('[data-ovp]').forEach(b => b.innerHTML = ic('play'));
+}
+function previewBuf(buf, off, secs) {
+  ensureCtx(); stopPreview(); if (playing) pause();
+  const s = actx.createBufferSource(), gn = actx.createGain(); s.buffer = buf; gn.gain.value = 0.8;
+  s.connect(gn); gn.connect(actx.destination);
+  s.start(0, off || 0, secs || buf.duration); pvSrc = s;
+}
+function copyText(t) {
+  const ok = () => toast(L('Kredit disalin ✔', 'Credit copied ✔'));
+  try { navigator.clipboard.writeText(t).then(ok, () => fb()); } catch (e) { fb(); }
+  function fb() { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch (e) {} ta.remove(); }
+}
+
+/* ================= CARIAN OPENVERSE ================= */
+const OV_API = 'https://api.openverse.org/v1/audio/';
+function b64ToBuf(b64) { const bin = atob(b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; }
+async function httpGet(url, binary) {
+  const CHP = CAP && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorHttp;
+  if (CHP) {
+    const r = await CHP.request({ url, method: 'GET', responseType: binary ? 'arraybuffer' : 'json', headers: { Accept: binary ? '*/*' : 'application/json' }, connectTimeout: 15000, readTimeout: 60000 });
+    if (r.status >= 400) throw new Error('HTTP ' + r.status);
+    if (!binary) return typeof r.data === 'string' ? JSON.parse(r.data) : r.data;
+    if (r.data instanceof ArrayBuffer) return r.data;
+    if (typeof r.data === 'string') return b64ToBuf(r.data.replace(/^data:[^,]*,/, ''));
+    throw new Error('format');
+  }
+  const r = await fetch(url, { headers: binary ? {} : { Accept: 'application/json' } });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return binary ? r.arrayBuffer() : r.json();
+}
+const OVQ = { music: ['happy', 'chill', 'piano', 'upbeat', 'acoustic', 'epic', 'kids', 'lofi', 'guitar', 'ambient'], sound_effect: ['whoosh', 'click', 'applause', 'laugh', 'pop', 'bell', 'swoosh', 'cartoon', 'notification', 'drum'] };
+let ovOpen = null, ovRes = [];
+function ovToggle(mode) {
+  stopPreview();
+  ovOpen = ovOpen === mode ? null : mode;
+  $('#ovMusic').innerHTML = ''; $('#ovSfx').innerHTML = '';
+  if (!ovOpen) return;
+  const box = $(ovOpen === 'music' ? '#ovMusic' : '#ovSfx');
+  box.innerHTML = `<div class="ovbox">
+    <div class="row" style="gap:6px"><input type="search" id="ovQ" placeholder="${ovOpen === 'music' ? 'Cari: happy, piano, chill…' : 'Cari: whoosh, click, laugh…'}" enterkeyhint="search"><button class="btn pri" id="ovGo" style="flex:0 0 auto;padding:0 11px">${ic('search')}</button><button class="btn" id="ovX" style="flex:0 0 auto;padding:0 10px">${ic('x')}</button></div>
+    <div class="chips" style="margin-top:6px">${OVQ[ovOpen].map(q => `<button class="chip" data-ovq="${q}">${q}</button>`).join('')}</div>
+    <div class="muted" style="font-size:11px">Sumber: Openverse · audio Creative Commons yang boleh guna komersial</div>
+    <div id="ovRes"></div></div>`;
+  const go = () => ovSearch($('#ovQ').value.trim());
+  $('#ovGo').onclick = go; $('#ovX').onclick = () => ovToggle(ovOpen);
+  $('#ovQ').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#ovQ').blur(); go(); } });
+  box.querySelector('.chips').onclick = e => { const b = e.target.closest('[data-ovq]'); if (b) { $('#ovQ').value = b.dataset.ovq; go(); } };
+  box.querySelector('#ovRes').onclick = ovResClick;
+}
+$('#ovMusicBtn').onclick = () => ovToggle('music');
+$('#ovSfxBtn').onclick = () => ovToggle('sound_effect');
+async function ovSearch(q) {
+  if (!q) return;
+  const el = $('#ovRes'); stopPreview();
+  el.innerHTML = `<p class="muted" style="margin:8px 2px">Mencari…</p>`;
+  const cat = ovOpen;
+  try {
+    const url = `${OV_API}?q=${encodeURIComponent(q)}&page_size=20&license_type=commercial&category=${cat}&mature=false`;
+    const j = await httpGet(url);
+    ovRes = (j.results || []).filter(r => r.url);
+    if (!$('#ovRes')) return;
+    if (!ovRes.length) { el.innerHTML = `<p class="muted" style="margin:8px 2px">Tiada hasil. Cuba perkataan lain dalam Bahasa Inggeris.</p>`; return; }
+    el.innerHTML = ovRes.map((r, i) => {
+      const lic = (r.license || '').toLowerCase(), free = lic === 'cc0' || lic === 'pdm';
+      const dur = r.duration ? fmt(r.duration / 1000).replace(/\.\d$/, '') : '';
+      return `<div class="ovr"><button class="pbtn" data-ovp="${i}">${ic('play')}</button>
+        <div class="flex"><div class="t1 ell" style="font-size:12.5px">${esc(r.title || 'Audio')}</div>
+        <div class="muted ell" style="font-size:11px">${esc(r.creator || '')}${dur ? ' · ' + dur : ''} · <span class="lic ${free ? 'free' : ''}">${free ? 'Bebas (CC0)' : 'Perlu kredit'}</span></div></div>
+        <button class="btn pri sm2" data-ovu="${i}">Guna</button></div>`;
+    }).join('');
+  } catch (e) {
+    if ($('#ovRes')) el.innerHTML = `<p class="muted" style="margin:8px 2px">Tiada internet atau carian gagal. Cuba lagi.</p>`;
+  }
+}
+function credOf(r) {
+  if (r.attribution) return r.attribution;
+  const lic = (r.license || '').toUpperCase();
+  return `"${r.title || 'Audio'}" by ${r.creator || 'Unknown'} (CC ${lic} ${r.license_version || ''}) ${r.foreign_landing_url || ''}`.trim();
+}
+async function ovResClick(e) {
+  const p = e.target.closest('[data-ovp]'), u = e.target.closest('[data-ovu]');
+  if (p) {
+    const r = ovRes[+p.dataset.ovp], same = pvAudio.dataset.i === p.dataset.ovp && !pvAudio.paused;
+    stopPreview(); if (same) return;
+    if (playing) pause();
+    pvAudio.src = r.url; pvAudio.dataset.i = p.dataset.ovp;
+    p.innerHTML = ic('pause');
+    pvAudio.play().catch(() => { p.innerHTML = ic('play'); toast(L('Gagal muat turun audio ini. Cuba yang lain.', 'Could not download this audio. Try another.')); });
+    pvAudio.onended = () => { p.innerHTML = ic('play'); };
+    return;
+  }
+  if (!u) return;
+  const r = ovRes[+u.dataset.ovu], mode = ovOpen;
+  if (mode === 'sound_effect' && !S.clips.length) return toast(L('Tambah video dulu', 'Add a video first'));
+  stopPreview(); ensureCtx(); busy(L('Memuat turun audio…', 'Downloading audio…'));
+  try {
+    const ab = await httpGet(r.url, true);
+    const buf = await actx.decodeAudioData(ab);
+    unbusy(); if (playing) pause();
+    if (mode === 'music') {
+      S.music = { buffer: buf, name: r.title || 'Audio', vol: 0.3, loop: true, fade: true, skip: 0, credit: credOf(r) };
+      renderMusic(); renderStrip(); renderExport(); toast(L('Muzik dipilih ✔', 'Music selected ✔'));
+    } else {
+      addSfx(buf, (r.title || 'SFX').slice(0, 24));
+      if (!S.sfxCredits) S.sfxCredits = [];
+      const lic = (r.license || '').toLowerCase(); if (lic !== 'cc0' && lic !== 'pdm') toast(L('Kredit: ', 'Credit: ') + credOf(r).slice(0, 80));
+    }
+  } catch (er) { unbusy(); toast(L('Gagal muat turun audio ini. Cuba yang lain.', 'Could not download this audio. Try another.')); }
+}
+
+
+/* ================= YOUTUBE AUDIO LIBRARY & LINK MP3 ================= */
+function openExternal(url) {
+  if (CAP) { const a = document.createElement('a'); a.href = url; document.body.appendChild(a); a.click(); a.remove(); }
+  else window.open(url, '_blank', 'noopener');
+}
+$('#ytLib').onclick = () => { toast(L('Muat turun lagu percuma di YouTube Audio Library, kemudian kembali dan tekan Upload.', 'Download free songs from YouTube Audio Library, then come back and tap Upload.')); setTimeout(() => openExternal('https://studio.youtube.com/channel/UC/music'), 700); };
+$('#mp3Btn').onclick = () => {
+  const box = $('#mp3Box');
+  if (box.innerHTML) { box.innerHTML = ''; return; }
+  box.innerHTML = `<div class="ovbox"><div class="row" style="gap:6px"><input type="url" id="mp3Url" placeholder="Tampal link fail MP3 / audio…" inputmode="url"><button class="btn pri" id="mp3Go" style="flex:0 0 auto">Guna</button></div>
+    <p class="muted" style="margin:6px 2px 0;font-size:11px">Pastikan anda ada hak menggunakan audio ini.</p></div>`;
+  const go = async () => {
+    const u = $('#mp3Url').value.trim();
+    if (!/^https?:\/\//i.test(u)) return toast(L('Link tidak sah', 'Invalid link'));
+    if (/(youtube\.com|youtu\.be|music\.youtube)/i.test(u)) return toast(L('Link YouTube tidak boleh digunakan. Muat turun dari YouTube Audio Library, kemudian tekan Upload.', 'YouTube links cannot be used. Download from YouTube Audio Library, then tap Upload.'));
+    ensureCtx(); busy(L('Memuat turun audio…', 'Downloading audio…'));
+    try {
+      const buf = await actx.decodeAudioData(await httpGet(u, true));
+      unbusy(); if (playing) pause();
+      let nm = decodeURIComponent(u.split('?')[0].split('/').pop() || 'Audio').replace(/\.[a-z0-9]+$/i, '').slice(0, 40) || 'Audio';
+      S.music = { buffer: buf, name: nm, vol: 0.3, loop: true, fade: true, skip: 0, credit: '' };
+      $('#mp3Box').innerHTML = ''; renderMusic(); renderStrip(); renderExport(); toast(L('Muzik dipilih ✔', 'Music selected ✔'));
+    } catch (e) { unbusy(); toast(L('Gagal muat turun audio ini. Cuba yang lain.', 'Could not download this audio. Try another.')); }
+  };
+  $('#mp3Go').onclick = go;
+  $('#mp3Url').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+  trNode(box); $('#mp3Url').focus();
+};
+
+/* ================= 50 TEMPLAT ================= */
+const TCATS = [['all', 'Semua'], ['trend', 'Trending'], ['jual', 'Jualan'], ['makan', 'Makanan'], ['raya', 'Perayaan'], ['travel', 'Travel'], ['family', 'Keluarga'], ['sukan', 'Tenaga'], ['cine', 'Sinematik'], ['aes', 'Estetik'], ['fun', 'Lucu']];
+const TCOL = { trend: ['#fe2c55', '#7b2ff7'], jual: ['#00704A', '#CBA258'], makan: ['#e85d04', '#f48c06'], raya: ['#1E3932', '#CBA258'], travel: ['#0077b6', '#00b4d8'], family: ['#d6336c', '#f783ac'], sukan: ['#c1121f', '#1d1d1d'], cine: ['#14213d', '#495057'], aes: ['#b08968', '#ddb892'], fun: ['#7209b7', '#f72585'] };
+// [id, emoji, nama BM, nama EN, kategori, lagu, beat/klip, transisi, gerakan, filter, kilat, tajuk BM, tajuk EN, gaya tajuk, sfx, bilangan cadangan]
+const TPLS = [
+ ['beatdrop','⚡','Beat Drop','Beat Drop','trend','ceria',2,'flash','pulse','vivid',1,'','',0,'',8],
+ ['zoomcut','🔍','Zoom Laju','Fast Zoom','trend','retro',2,'zoom','zin','kontras',0,'','',0,'whoosh',10],
+ ['glowup','✨','Glow Up','Glow Up','trend','ceria',4,'flash','zin,zout','terang',1,'Before ➜ After','Before ➜ After',7,'',4],
+ ['vibe','😎','Vibe Check','Vibe Check','trend','tropika',2,'slide','shake','vivid',1,'VIBE CHECK ✅','VIBE CHECK ✅',3,'',8],
+ ['photodump','📸','Photo Dump','Photo Dump','trend','lofi',2,'none','zin','filem',0,'photo dump 📸','photo dump 📸',9,'klik',12],
+ ['jualan','🛒','Jualan Hebat','Big Sale','jual','korporat',4,'slide','zin','vivid',0,'JUALAN HEBAT!','BIG SALE!',1,'kaching',5],
+ ['promo','🏷️','Promosi Kilat','Flash Promo','jual','ceria',2,'flash','pulse','kontras',1,'PROMOSI KILAT ⚡','FLASH PROMO ⚡',3,'whoosh',6],
+ ['produk','📦','Produk Baru','New Product','jual','korporat',4,'fade','zin,panr','terang',0,'Produk Baru!','New Arrival!',2,'ding',4],
+ ['testimoni','⭐','Testimoni','Testimonials','jual','santai',4,'fade','zout','hangat',0,'Kata Pelanggan Kami','What Customers Say',8,'',5],
+ ['kedai','🏪','Kedai Kami','Our Shop','jual','tropika',4,'slide','panl,panr','vivid',0,'Jom Singgah!','Come Visit Us!',2,'',6],
+ ['menu','🍜','Menu Hari Ini',"Today's Menu",'makan','santai',4,'fade','zin','hangat',0,'Menu Hari Ini',"Today's Menu",8,'',5],
+ ['sedap','😋','Sedap Gila','So Delicious','makan','ceria',2,'zoom','pulse','vivid',1,'SEDAP GILA! 😋','SO GOOD! 😋',7,'pop',8],
+ ['resepi','👩‍🍳','Resepi Mudah','Easy Recipe','makan','korporat',4,'slide','zout','terang',0,'Resepi Mudah','Easy Recipe',6,'',6],
+ ['kopi','☕','Kopi Pagi','Morning Coffee','makan','lofi',4,'fade','zin,panl','filem',0,'kopi pagi ☕','morning coffee ☕',9,'',4],
+ ['streetfood','🍢','Street Food','Street Food','makan','tropika',2,'flash','shake','kontras',1,'STREET FOOD','STREET FOOD',3,'whoosh',8],
+ ['raya','🌙','Selamat Hari Raya','Eid Greetings','raya','tradisional',4,'fade','zin,zout','hangat',0,'Selamat Hari Raya\nMaaf Zahir & Batin','Happy Eid\nEid Mubarak',8,'gong',5],
+ ['merdeka','🇲🇾','Merdeka','Independence Day','raya','epik',4,'flash','panr','vivid',1,'Selamat Hari Merdeka!','Happy Independence Day!',7,'',6],
+ ['birthday','🎂','Hari Jadi','Birthday','raya','comel',4,'zoom','pulse','terang',1,'Selamat Hari Jadi! 🎉','Happy Birthday! 🎉',7,'tada',6],
+ ['kahwin','💍','Majlis Kahwin','Wedding','raya','santai',8,'fade','zin','vintage',0,'Walimatul Urus','Our Wedding',9,'',6],
+ ['tahunbaru','🎆','Tahun Baru','New Year','raya','ceria',2,'flash','pulse','malam',1,'Selamat Tahun Baru!','Happy New Year!',4,'boom',8],
+ ['jalan','✈️','Jalan-Jalan','Travel Vlog','travel','tropika',4,'slide','panl,panr','vivid',0,'Jalan-Jalan Cari Makan','Travel Diaries',9,'whoosh',8],
+ ['pantai','🏖️','Pantai','Beach Day','travel','tropika',4,'fade','zin','hangat',0,'Pantai Vibes 🌊','Beach Vibes 🌊',4,'',6],
+ ['gunung','⛰️','Mendaki','Hiking','travel','epik',4,'zoom','zout','drama',0,'Ke Puncak!','To The Top!',7,'',6],
+ ['bandar','🌃','Bandar Malam','City Night','travel','retro',2,'flash','zin','malam',1,'CITY NIGHTS','CITY NIGHTS',5,'',8],
+ ['roadtrip','🚗','Road Trip','Road Trip','travel','ceria',2,'slide','panr','filem',0,'ROAD TRIP 🚗','ROAD TRIP 🚗',0,'whoosh',10],
+ ['keluarga','👨‍👩‍👧','Keluarga Bahagia','Happy Family','family','santai',4,'fade','zin,zout','hangat',0,'Keluarga Bahagia ❤️','Happy Family ❤️',9,'',6],
+ ['anak','🧸','Si Comel','Little One','family','comel',4,'zoom','pulse','terang',0,'Si Comel Kami','Our Little One',2,'pop',6],
+ ['kenangan','🕰️','Kenangan','Memories','family','lofi',8,'fade','zin','vintage',0,'Kenangan Terindah','Sweet Memories',8,'',6],
+ ['sekolah','🎒','Hari Sekolah','School Days','family','korporat',4,'slide','zout','terang',0,'Hari Pertama Sekolah','First Day of School',1,'ding',5],
+ ['ibu','🌸','Terima Kasih Ibu','Thank You Mom','family','santai',8,'fade','zin','pudar',0,'Terima Kasih Ibu 🌸','Thank You Mom 🌸',9,'',5],
+ ['gym','💪','Gym Motivasi','Gym Motivation','sukan','epik',2,'flash','shake','drama',1,'NO PAIN NO GAIN','NO PAIN NO GAIN',7,'boom',8],
+ ['bola','⚽','Highlight Bola','Football Highlights','sukan','epik',2,'zoom','pulse','kontras',1,'GOL!!! ⚽','GOAL!!! ⚽',3,'tepuk',8],
+ ['lari','🏃','Larian','Running','sukan','ceria',2,'slide','panr','vivid',0,'Jom Lari!',"Let's Run!",0,'whoosh',8],
+ ['hype','🔥','Hype Mode','Hype Mode','sukan','retro',2,'flash','shake,pulse','kontras',1,'🔥 HYPE 🔥','🔥 HYPE 🔥',4,'',12],
+ ['juara','🏆','Juara','Champion','sukan','epik',4,'zoom','zin','drama',1,'JUARA! 🏆','CHAMPION! 🏆',7,'tada',6],
+ ['sinema','🎬','Sinematik','Cinematic','cine','epik',8,'fade','zin','filem',0,'','',0,'',5],
+ ['trailer','🎞️','Trailer Filem','Movie Trailer','cine','suspens',4,'fade','zout','drama',0,'AKAN DATANG','COMING SOON',7,'boom',6],
+ ['misteri','🕵️','Misteri','Mystery','cine','suspens',4,'fade','panl','bw',0,'Apa yang berlaku…?','What happened…?',6,'',5],
+ ['epikslow','🐢','Slow Epik','Epic Slow-mo','cine','epik',8,'zoom','zin','drama',0,'','',0,'',4],
+ ['dokumentari','🎥','Dokumentari','Documentary','cine','santai',8,'fade','panl,panr','pudar',0,'Sebuah Kisah','A Story',8,'',5],
+ ['aesthetic','🌷','Aesthetic','Aesthetic','aes','lofi',4,'fade','zin','pudar',0,'aesthetic ✨','aesthetic ✨',9,'',6],
+ ['vintage','📼','Vintage 90an','Vintage 90s','aes','lofi',4,'none','zout','vintage',0,'1990','1990',3,'',6],
+ ['hitamputih','🖤','Hitam Putih','Black & White','aes','santai',4,'fade','zin','bw',0,'','',0,'',6],
+ ['senja','🌅','Senja','Golden Hour','aes','santai',8,'fade','panr','hangat',0,'senja 🌅','golden hour 🌅',9,'',5],
+ ['minimal','◻️','Minimalis','Minimal','aes','korporat',4,'slide','none','terang',0,'less is more','less is more',8,'',6],
+ ['lawak','😂','Lawak','Funny','fun','comel',2,'zoom','shake','vivid',1,'😂😂😂','😂😂😂',0,'ketawa',6],
+ ['meme','🤪','Meme','Meme','fun','retro',2,'flash','spin','kontras',1,'Bila kau sedar…','When you realize…',0,'boing',6],
+ ['kucing','🐱','Kucing Comel','Cute Cats','fun','comel',4,'zoom','pulse','terang',0,'Meow~ 🐱','Meow~ 🐱',9,'pop',6],
+ ['game','🎮','Gamer','Gamer','fun','retro',2,'flash','pulse','malam',1,'LEVEL UP!','LEVEL UP!',4,'betul',8],
+ ['kejutan','🎁','Kejutan','Surprise','fun','suspens',4,'flash','zin','vivid',1,'Tunggu sampai habis…','Wait for it…',6,'drumroll',5]
+].map(r => ({ id: r[0], em: r[1], bm: r[2], en: r[3], cat: r[4], track: r[5], beats: r[6], trans: r[7], motion: r[8], filter: r[9], flash: !!r[10], tb: r[11], te: r[12], ts: r[13], sfx: r[14], n: r[15] }));
+let tplCat = 'all', tplSel = null, tplN = 6;
+const tName = T => LANG === 'en' ? T.en : T.bm;
+const speedLbl = b => b <= 2 ? L('Laju', 'Fast') : b <= 4 ? L('Sederhana', 'Medium') : L('Perlahan', 'Slow');
+function renderTplTab() {
+  $('#tplCat').innerHTML = chipsHtml(TCATS, tplCat, 'tc');
+  trNode($('#tplCat'));
+  $('#tplGrid').innerHTML = TPLS.filter(T => tplCat === 'all' || T.cat === tplCat).map(T => {
+    const [a, b] = TCOL[T.cat], TR = TRACKS.find(x => x.id === T.track);
+    return `<button class="tcard" data-tp="${T.id}" style="background:linear-gradient(135deg,${a},${b})"><span class="tn">${speedLbl(T.beats)}</span><span class="te">${T.em}</span><b>${esc(tName(T))}</b><small>🎵 ${esc(tr(TR.n))} · ${T.n} ${L('klip', 'clips')}</small></button>`;
+  }).join('');
+}
+$('#tplCat').onclick = e => { const b = e.target.closest('[data-tc]'); if (!b) return; tplCat = b.dataset.tc; renderTplTab(); };
+$('#tplGrid').onclick = e => { const b = e.target.closest('[data-tp]'); if (!b) return; tplSel = TPLS.find(x => x.id === b.dataset.tp); tplN = tplSel.n; renderTplSheet(); $('#tplOv').classList.add('on'); };
+$('#emptyTpl').onclick = () => showTab('tpl');
+function renderTplSheet() {
+  const T = tplSel, TR = TRACKS.find(x => x.id === T.track), slot = T.beats * 60 / TR.bpm;
+  const tl = { none: L('Potong terus', 'Hard cut'), fade: 'Fade', flash: 'Flash', zoom: 'Zoom', slide: L('Geser', 'Slide') }[T.trans];
+  $('#tplSheet').innerHTML = `<div class="big">${T.em}</div><h3>${esc(tName(T))}</h3>
+    <div class="tmeta"><span>🎵 ${esc(tr(TR.n))}</span><span>⏱ ${speedLbl(T.beats)} · ${slot.toFixed(1)}s/${L('klip', 'clip')}</span><span>✨ ${tl}</span>${T.flash ? `<span>⚡ ${L('Kilat beat', 'Beat flash')}</span>` : ''}${T.sfx ? `<span>🔔 ${esc(tr(SFX.find(x => x.id === T.sfx).n))}</span>` : ''}</div>
+    <label class="f" style="justify-content:center;margin-top:12px">${L('Bilangan video / gambar', 'Number of videos / photos')}</label>
+    <div class="cnt"><button data-n="-1">−</button><b id="tplNv">${tplN}</b><button data-n="1">+</button></div>
+    <p class="muted" style="text-align:center;margin:4px 0 12px">${L('Anggaran tempoh', 'Estimated length')}: <b id="tplDur">${fmt(tplN * slot)}</b></p>
+    <button class="btn pri full" id="tplPick" style="height:44px;font-size:14px">${ic('plus')}${L('Pilih', 'Pick')} <span id="tplNb">${tplN}</span> ${L('video / gambar', 'videos / photos')}</button>
+    <button class="btn full" id="tplClose" style="margin-top:8px">${ic('x')}${L('Tutup', 'Close')}</button>`;
+  $('#tplSheet').querySelector('.cnt').onclick = e => {
+    const b = e.target.closest('[data-n]'); if (!b) return;
+    tplN = clamp(tplN + +b.dataset.n, 1, 30);
+    $('#tplNv').textContent = tplN; $('#tplNb').textContent = tplN; $('#tplDur').textContent = fmt(tplN * slot);
+  };
+  $('#tplClose').onclick = () => $('#tplOv').classList.remove('on');
+  $('#tplPick').onclick = () => {
+    if (S.clips.length && !confirm(L('Projek sekarang akan diganti. Teruskan?', 'The current project will be replaced. Continue?'))) return;
+    $('#fTpl').click();
+  };
+}
+$('#tplOv').addEventListener('click', e => { if (e.target.id === 'tplOv') $('#tplOv').classList.remove('on'); });
+$('#fTpl').onchange = async e => {
+  let files = [...e.target.files]; e.target.value = '';
+  if (!files.length || !tplSel) return;
+  if (files.length > tplN) { files = files.slice(0, tplN); toast(L('Hanya ' + tplN + ' fail pertama digunakan', 'Only the first ' + tplN + ' files are used')); }
+  $('#tplOv').classList.remove('on');
+  await applyTemplate(tplSel, files);
+};
+async function applyTemplate(T, files) {
+  if (playing) pause(); stopPreview();
+  pushUndo(true);
+  const clips = await importFiles(files);
+  if (!clips.length) return;
+  ensureCtx(); try { await actx.resume(); } catch (e) {}
+  const TR = TRACKS.find(x => x.id === T.track), beat = 60 / TR.bpm, slot = T.beats * beat;
+  const ts = T.trans.split(','), ms = T.motion.split(',');
+  clips.forEach((c, i) => {
+    c.trans = i === 0 ? (T.trans === 'none' ? 'none' : 'fade') : ts[i % ts.length];
+    c.motion = ms[i % ms.length]; c.kb = false; c.filter = T.filter; c.flash = T.flash; c.in = 0;
+    c.out = c.type === 'image' ? slot : Math.min(c.dur, slot);
+  });
+  S.beat = beat; S.clips = clips; S.items = []; S.sfx = []; S.sel = null; selSfx = null; S.dub = null;
+  const buf = await getGen('t', TR.id);
+  S.music = { buffer: buf, name: 'ProEdit · ' + tr(TR.n), preset: TR.id, vol: 0.6, loop: true, fade: true, skip: 0, credit: '' };
+  const T0 = total(), title = LANG === 'en' ? T.te : T.tb;
+  if (title) {
+    const st = TPL[T.ts].p;
+    S.items.push({ id: uid++, kind: 'text', text: title, x: 0.5, start: 0, end: r1(Math.min(T0, Math.max(2.5, slot * 1.5))), opacity: 1, bg: '#00704A', ...st, y: st.y || 0.28, anim: st.anim || ([8, 9].includes(T.ts) ? 'fade' : 'pop') });
+  }
+  if (T.sfx) {
+    const sb = await getGen('s', T.sfx), F = SFX.find(x => x.id === T.sfx), nm = tr(F.n);
+    if (['whoosh', 'klik', 'pop'].includes(T.sfx)) clips.forEach((c, i) => { if (i > 0) S.sfx.push({ id: uid++, buffer: sb, name: nm, start: r1(Math.max(0, clipStart(i) - (T.sfx === 'whoosh' ? 0.25 : 0))), vol: 0.7 }); });
+    else S.sfx.push({ id: uid++, buffer: sb, name: nm, start: T.sfx === 'tada' ? r1(clipStart(clips.length - 1)) : 0, vol: 0.8 });
+  }
+  curT = 0; lastCurId = undefined;
+  renderItemsUI(); renderSfx(); renderMusic(); renderDub(); timelineChanged(); showTab('klip');
+  toast(L('Templat siap! Tekan ▶ untuk tengok. Tukar lagu di tab Suara.', 'Template ready! Tap ▶ to watch. Change the song in the Audio tab.'));
+  setTimeout(() => play(0), 400);
+}
+const _setLang0 = setLang;
+setLang = l => { _setLang0(l); renderTplTab(); if ($('#tplOv').classList.contains('on') && tplSel) renderTplSheet(); };
+renderTplTab();
+
+/* ================= EXPORT ================= */
+function renderExport() {
+  const T = total();
+  $('#expInfo').innerHTML = S.clips.length
+    ? `${fmt(T)} · ${S.clips.length} klip · ${S.items.length} teks/stiker${S.dub ? ' · dubbing' : ''}${S.music ? ' · muzik' : ''}${S.sfx.length ? ' · ' + S.sfx.length + ' SFX' : ''}<br>Saiz <b>${W}×${H}</b> (${S.ratio})` + (T > 180 ? '<br>⚠ Lebih 3 minit, export ambil masa lama.' : '')
+    : 'Belum ada video.';
+  $('#resChips').innerHTML = chipsHtml([[1080, 'Full HD 1080p'], [720, 'HD 720p (ringan)']], S.res, 'res');
+}
+$('#resChips').onclick = e => { const b = e.target.closest('[data-res]'); if (!b) return; S.res = +b.dataset.res; setSize(); renderExport(); };
+function pickMime() {
+  const list = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4;codecs=avc1,mp4a', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+  for (const m of list) { try { if (MediaRecorder.isTypeSupported(m)) return m; } catch (e) {} }
+  return '';
+}
+$('#expBtn').onclick = async () => {
+  if (!S.clips.length) return toast('Tambah video dulu');
+  if (dubRec || exporting) return;
+  if (!window.MediaRecorder || !cv.captureStream) return alert(L('Peranti ini tidak menyokong export video.','This device does not support video export.'));
+  if (playing) pause();
+  ensureCtx(); try { await actx.resume(); } catch (e) {}
+  const mime = pickMime();
+  exporting = true; exportCancelled = false; dirty = true;
+  $('#expBar').style.width = '0%'; $('#expPct').textContent = '0%'; $('#expOv').classList.add('on');
+  await seekTo(0); draw(0);
+  const vs = cv.captureStream(30);
+  const stream = new MediaStream([...vs.getVideoTracks(), ...recDest.stream.getAudioTracks()]);
+  const chunks = [];
+  try { recorder = new MediaRecorder(stream, { mimeType: mime || undefined, videoBitsPerSecond: S.res === 720 ? 5e6 : 9e6, audioBitsPerSecond: 160000 }); }
+  catch (e) { recorder = new MediaRecorder(stream); }
+  let lock = null; try { lock = await navigator.wakeLock.request('screen'); } catch (e) {}
+  recorder.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  recorder.onstop = () => {
+    vs.getTracks().forEach(t => t.stop());
+    try { lock && lock.release(); } catch (e) {}
+    const type = ((recorder && recorder.mimeType) || mime || 'video/webm').split(';')[0];
+    recorder = null; exporting = false; dirty = true;
+    $('#expOv').classList.remove('on');
+    if (exportCancelled) { toast('Export dibatalkan'); return; }
+    showResult(new Blob(chunks, { type }), type.includes('mp4') ? 'mp4' : 'webm');
+  };
+  onFinish = () => setTimeout(() => { if (recorder && recorder.state !== 'inactive') recorder.stop(); }, 200);
+  recorder.start(500);
+  await play(0);
+};
+$('#expCancel').onclick = () => { exportCancelled = true; onFinish = null; pause(); if (recorder && recorder.state !== 'inactive') recorder.stop(); };
+
+/* ================= HASIL: SHARE / SIMPAN ================= */
+let lastBlob = null, lastName = '';
+function showResult(blob, ext) {
+  lastBlob = blob;
+  const d = new Date();
+  lastName = `ProEdit_${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}_${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}.${ext}`;
+  const rv = $('#resVid'); if (rv.src) URL.revokeObjectURL(rv.src);
+  rv.src = URL.createObjectURL(blob);
+  $('#resInfo').textContent = `${lastName} · ${(blob.size / 1048576).toFixed(1)} MB`;
+  $('#resOv').classList.add('on');
+}
+$('#resClose').onclick = () => { $('#resVid').pause(); $('#resOv').classList.remove('on'); };
+function u8b64(u) { let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
+async function writeNative(blob, path, directory) {
+  const FS = window.Capacitor.Plugins.Filesystem;
+  const buf = new Uint8Array(await blob.arrayBuffer()), CH = 3 * 512 * 1024;
+  for (let o = 0; o < buf.length; o += CH) {
+    const data = u8b64(buf.subarray(o, o + CH));
+    if (o === 0) await FS.writeFile({ path, data, directory, recursive: true });
+    else await FS.appendFile({ path, data, directory });
+    $('#busyTxt').textContent = 'Menyediakan fail… ' + Math.min(100, Math.round((o + CH) / buf.length * 100)) + '%';
+  }
+  return (await FS.getUri({ path, directory })).uri;
+}
+function download() { const a = document.createElement('a'); a.href = URL.createObjectURL(lastBlob); a.download = lastName; document.body.appendChild(a); a.click(); a.remove(); }
+$('#resShare').onclick = async () => {
+  if (!lastBlob) return;
+  $('#resVid').pause(); busy('Menyediakan fail…');
+  try {
+    if (CAP) {
+      const uri = await writeNative(lastBlob, lastName, 'CACHE'); unbusy();
+      await window.Capacitor.Plugins.Share.share({ title: 'ProEdit', files: [uri], dialogTitle: L('Hantar video ke…','Send video to…') });
+    } else {
+      const f = new File([lastBlob], lastName, { type: lastBlob.type }); unbusy();
+      if (navigator.canShare && navigator.canShare({ files: [f] })) await navigator.share({ files: [f], title: 'ProEdit' });
+      else { toast('Share tidak disokong, fail dimuat turun'); download(); }
+    }
+  } catch (e) { unbusy(); const m = (e && e.message) || String(e); if (!/abort|cancel/i.test(m + (e && e.name))) alert(L('Gagal share: ','Share failed: ') + m); }
+};
+$('#resSave').onclick = async () => {
+  if (!lastBlob) return;
+  busy('Menyimpan…');
+  try {
+    if (CAP) {
+      try { await window.Capacitor.Plugins.Filesystem.requestPermissions(); } catch (e) {}
+      await writeNative(lastBlob, 'ProEdit/' + lastName, 'DOCUMENTS'); unbusy();
+      alert(L('Disimpan di:\nFail › Documents › ProEdit › ','Saved to:\nFiles › Documents › ProEdit › ') + lastName + L('\n\nUntuk terus ke TikTok, tekan "Share ke TikTok".','\n\nTo go straight to TikTok, tap "Share to TikTok".'));
+    } else { download(); unbusy(); }
+  } catch (e) { unbusy(); alert(L('Tidak dapat simpan terus (','Could not save directly (') + ((e && e.message) || e) + L(').\nGuna butang "Share" dan pilih Drive / Fail / TikTok.',').\nUse the "Share" button and choose Drive / Files / TikTok.')); }
+};
+
+/* ================= MULA ================= */
+paintIcons();
+window.addEventListener('resize', () => { fitCanvas(); renderStrip(); });
+setSize(); renderSfx(); renderCanvasUI(); renderItemsUI(); renderDub(); renderMusic(); renderExport(); renderClipPanel(); renderEfek(); renderStrip(); updTime(); setPlayBtn();
+setLang(LANG);
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
