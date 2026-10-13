@@ -149,7 +149,7 @@ nav button.on .ni{background:var(--gl)}
 #cdNum{font-size:110px;font-weight:900;color:#fff;text-shadow:0 0 40px var(--g)}
 #toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);background:var(--gd);color:#fff;padding:9px 15px;border-radius:99px;font-size:12.5px;font-weight:700;z-index:80;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 #toast.on{opacity:1}
-#vid{position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
+#vid,#vid2{position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
 #resVid{width:100%;max-height:44vh;background:#000;border-radius:12px}
 .bstack{display:flex;flex-direction:column;gap:8px}
 .mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:2px 0 8px}
@@ -340,6 +340,7 @@ input[type=url]{flex:1;min-width:0;background:#fff;color:var(--ink);border:1px s
 </nav>
 
 <video id="vid" playsinline webkit-playsinline preload="auto"></video>
+<video id="vid2" playsinline webkit-playsinline preload="auto"></video>
 
 <div id="cdOv" class="ovl"><div id="cdNum">3</div></div>
 <div id="expOv" class="ovl"><div class="box">
@@ -571,7 +572,7 @@ const TPL = [
 const S = { beat: 0.5, clips: [], items: [], sfx: [], dub: null, music: null, origVol: 1, fit: 'blur', bg: '#000000', ratio: '9:16', res: 1080, sel: null };
 let W = 1080, H = 1920, uid = 1, pps = 60;
 const cv = $('#cv'), g = cv.getContext('2d');
-const v = $('#vid');
+const vids = [$('#vid'), $('#vid2')]; let vi = 0, v = vids[0], egs = [];
 const small = document.createElement('canvas'), sg = small.getContext('2d');
 let sfxGain, actx = null, master, origGain, dubGain, musicGain, recDest, impulseBuf = null;
 let playing = false, curT = 0, ci = -1, switching = false, dirty = true, imgT0 = 0;
@@ -626,7 +627,7 @@ function ensureCtx() {
   dubGain = actx.createGain(); dubGain.connect(master);
   musicGain = actx.createGain(); musicGain.connect(master);
   sfxGain = actx.createGain(); sfxGain.connect(master);
-  actx.createMediaElementSource(v).connect(origGain);
+  egs = vids.map((el, k) => { const gn = actx.createGain(); gn.gain.value = k === vi ? 1 : 0; actx.createMediaElementSource(el).connect(gn); gn.connect(origGain); return gn; });
   applyVols();
 }
 function applyVols() {
@@ -716,11 +717,30 @@ function stopAudio() {
 async function loadClip(i, media) {
   const c = S.clips[i]; if (!c) return;
   ci = i;
-  if (c.type === 'image') { if (!v.paused) v.pause(); applyVols(); dirty = true; return; }
+  if (actx && egs.length && !playing) { egs[vi].gain.cancelScheduledValues(0); egs[vi].gain.value = 1; egs[1 - vi].gain.cancelScheduledValues(0); egs[1 - vi].gain.value = 0; vids[1 - vi].pause(); }
+  if (c.type === 'image') { if (!v.paused) v.pause(); applyVols(); dirty = true; schedPreload(); return; }
   if (v.dataset.cid !== c.url) { v.src = c.url; v.dataset.cid = c.url; await waitEv(v, 'loadeddata', 6000); }
   v.defaultPlaybackRate = c.speed; v.playbackRate = c.speed;
   if (Math.abs(v.currentTime - media) > 0.02) { v.currentTime = media; await waitEv(v, 'seeked', 3000); }
-  applyVols(); dirty = true;
+  applyVols(); dirty = true; schedPreload();
+}
+/* Sedia klip video seterusnya dalam pemain kedua supaya tukar klip lancar tanpa bunyi ketak */
+let preT = null;
+function schedPreload() { clearTimeout(preT); preT = setTimeout(preloadNext, 120); }
+async function preloadNext() {
+  const n = ci + 1, c = S.clips[n]; if (!c || c.type === 'image') return;
+  const o = vids[1 - vi];
+  if (o === v) return;
+  if (o.dataset.cid !== c.url) { o.src = c.url; o.dataset.cid = c.url; await waitEv(o, 'loadeddata', 6000); }
+  if (vids[1 - vi] !== o || S.clips[ci + 1] !== c) return;
+  o.defaultPlaybackRate = c.speed; o.playbackRate = c.speed;
+  if (Math.abs(o.currentTime - c.in) > 0.03) { o.currentTime = c.in; await waitEv(o, 'seeked', 3000); }
+}
+function xfade(fromEl, toEl) {
+  if (!actx || !egs.length) return;
+  const t = actx.currentTime, a = egs[vids.indexOf(fromEl)], b = egs[vids.indexOf(toEl)];
+  if (a && a !== b) { a.gain.cancelScheduledValues(t); a.gain.setValueAtTime(a.gain.value, t); a.gain.linearRampToValueAtTime(0, t + 0.035); }
+  if (b) { b.gain.cancelScheduledValues(t); b.gain.setValueAtTime(a === b ? b.gain.value : 0, t); b.gain.linearRampToValueAtTime(1, t + 0.035); }
 }
 let qPending = null, qRun = null;
 function queueLoad(i, m) {
@@ -749,10 +769,29 @@ async function play(from) {
   if (c.type === 'image') imgT0 = actx.currentTime - (from - clipStart(ci));
   else { try { await v.play(); } catch (e) {} }
 }
-function pause() { playing = false; v.pause(); stopAudio(); setPlayBtn(); dirty = true; clearTimeout(pvTimer); }
+function pause() { playing = false; vids.forEach(x => x.pause()); stopAudio(); setPlayBtn(); dirty = true; clearTimeout(pvTimer); }
 async function nextClip() {
-  switching = true; v.pause();
-  if (ci + 1 >= S.clips.length) { switching = false; finish(); return; }
+  switching = true;
+  if (ci + 1 >= S.clips.length) { v.pause(); switching = false; finish(); return; }
+  const n0 = ci + 1, c0 = S.clips[n0], cur = S.clips[ci];
+  /* Laluan lancar: gambar, atau video yang sudah disediakan — muzik tidak dihentikan */
+  if (c0.type === 'image') {
+    if (cur.type !== 'image') { const old = v; xfade(old, null); egs.forEach(gq => { const t = actx.currentTime; gq.gain.cancelScheduledValues(t); gq.gain.setValueAtTime(gq.gain.value, t); gq.gain.linearRampToValueAtTime(0, t + 0.035); }); setTimeout(() => old.pause(), 60); }
+    ci = n0; imgT0 = actx.currentTime; curT = clipStart(n0); applyVols(); draw(curT);
+    switching = false; if (!exporting) checkCurClip(); schedPreload(); return;
+  }
+  const o = vids[1 - vi];
+  if (o.dataset.cid === c0.url && o.readyState >= 2 && Math.abs(o.currentTime - c0.in) < 0.1) {
+    const old = v; vi = 1 - vi; v = o; ci = n0;
+    v.playbackRate = c0.speed; curT = clipStart(n0);
+    if (playing) { try { v.play(); } catch (e) {} }
+    xfade(old, v); setTimeout(() => { if (old !== v) old.pause(); }, 60);
+    applyVols(); draw(curT);
+    switching = false; if (!exporting) checkCurClip(); schedPreload(); return;
+  }
+  /* Laluan sandaran: video belum sedia — pudar perlahan supaya tiada bunyi ketak */
+  v.pause();
+  try { const t = actx.currentTime; master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0, t + 0.04); await new Promise(r => setTimeout(r, 50)); } catch (e) {}
   try { await actx.suspend(); } catch (e) {}
   if (recorder && recorder.state === 'recording') recorder.pause();
   if (dubRec && dubRec.rec.state === 'recording') dubRec.rec.pause();
@@ -761,6 +800,7 @@ async function nextClip() {
   curT = clipStart(n); draw(curT);
   if (c.type === 'image') imgT0 = actx.currentTime;
   try { await actx.resume(); } catch (e) {}
+  try { const t = actx.currentTime; master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(0, t); master.gain.linearRampToValueAtTime(1, t + 0.04); } catch (e) {}
   if (recorder && recorder.state === 'paused') recorder.resume();
   if (dubRec && dubRec.rec.state === 'paused') dubRec.rec.resume();
   switching = false;
@@ -768,7 +808,7 @@ async function nextClip() {
   if (playing && c.type !== 'image') { try { await v.play(); } catch (e) {} }
 }
 function finish() {
-  playing = false; v.pause(); stopAudio();
+  playing = false; vids.forEach(x => x.pause()); stopAudio();
   curT = total(); setPlayBtn(); dirty = true; updTime();
   const f = onFinish; onFinish = null; if (f) f();
 }
@@ -779,8 +819,7 @@ function updTime(noStrip) {
   if (!noStrip) syncStrip();
   if (exporting) { const p = T ? Math.min(100, curT / T * 100) : 0; $('#expBar').style.width = p + '%'; $('#expPct').textContent = Math.floor(p) + '%'; }
 }
-v.addEventListener('seeked', () => dirty = true);
-v.addEventListener('loadeddata', () => dirty = true);
+vids.forEach(x => { x.addEventListener('seeked', () => dirty = true); x.addEventListener('loadeddata', () => dirty = true); });
 function previewFrom(t, ms) {
   play(Math.max(0, t)); clearTimeout(pvTimer);
   pvTimer = setTimeout(() => { if (playing && !exporting && !dubRec) pause(); }, ms || 1600);
@@ -1048,7 +1087,7 @@ function checkCurClip() {
   if (id !== lastCurId) { lastCurId = id; renderClipPanel(); renderEfek(); markStripCur(); }
 }
 function timelineChanged() {
-  if (!S.clips.length) { v.removeAttribute('src'); v.dataset.cid = ''; v.load(); ci = -1; }
+  if (!S.clips.length) { vids.forEach(x => { x.removeAttribute('src'); x.dataset.cid = ''; x.load(); }); ci = -1; }
   curT = clamp(curT, 0, total());
   lastCurId = undefined;
   renderStrip(); seekTo(curT); renderExport(); renderDubInfoOnly();
@@ -1888,7 +1927,7 @@ const TPLS = [
  ['kucing','🐱','Kucing Comel','Cute Cats','fun','comel',4,'zoom','pulse','terang',0,'Meow~ 🐱','Meow~ 🐱',9,'pop',6],
  ['game','🎮','Gamer','Gamer','fun','retro',2,'flash','pulse','malam',1,'LEVEL UP!','LEVEL UP!',4,'betul',8],
  ['kejutan','🎁','Kejutan','Surprise','fun','suspens',4,'flash','zin','vivid',1,'Tunggu sampai habis…','Wait for it…',6,'drumroll',5]
-].map(r => ({ id: r[0], em: r[1], bm: r[2], en: r[3], cat: r[4], track: r[5], beats: r[6], trans: r[7], motion: r[8], filter: r[9], flash: !!r[10], tb: r[11], te: r[12], ts: r[13], sfx: r[14], n: r[15] }));
+].map(r => ({ id: r[0], em: r[1], bm: r[2], en: r[3], cat: r[4], track: r[5], beats: r[6], trans: r[7], motion: r[8], filter: r[9], flash: !!r[10], tb: r[11], te: r[12], ts: r[13], sfx: ['whoosh', 'klik', 'pop'].includes(r[14]) ? '' : r[14], n: r[15] }));
 let tplCat = 'all', tplSel = null, tplN = 6;
 const tName = T => LANG === 'en' ? T.en : T.bm;
 const speedLbl = b => b <= 2 ? L('Laju', 'Fast') : b <= 4 ? L('Sederhana', 'Medium') : L('Perlahan', 'Slow');
@@ -1953,10 +1992,9 @@ async function applyTemplate(T, files) {
     const st = TPL[T.ts].p;
     S.items.push({ id: uid++, kind: 'text', text: title, x: 0.5, start: 0, end: r1(Math.min(T0, Math.max(2.5, slot * 1.5))), opacity: 1, bg: '#00704A', ...st, y: st.y || 0.28, anim: st.anim || ([8, 9].includes(T.ts) ? 'fade' : 'pop') });
   }
-  if (T.sfx) {
+  if (T.sfx && !['whoosh', 'klik', 'pop'].includes(T.sfx)) {
     const sb = await getGen('s', T.sfx), F = SFX.find(x => x.id === T.sfx), nm = tr(F.n);
-    if (['whoosh', 'klik', 'pop'].includes(T.sfx)) clips.forEach((c, i) => { if (i > 0) S.sfx.push({ id: uid++, buffer: sb, name: nm, start: r1(Math.max(0, clipStart(i) - (T.sfx === 'whoosh' ? 0.25 : 0))), vol: 0.7 }); });
-    else S.sfx.push({ id: uid++, buffer: sb, name: nm, start: T.sfx === 'tada' ? r1(clipStart(clips.length - 1)) : 0, vol: 0.8 });
+    S.sfx.push({ id: uid++, buffer: sb, name: nm, start: T.sfx === 'tada' ? r1(clipStart(clips.length - 1)) : 0, vol: 0.8 });
   }
   curT = 0; lastCurId = undefined;
   renderItemsUI(); renderSfx(); renderMusic(); renderDub(); timelineChanged(); showTab('klip');
